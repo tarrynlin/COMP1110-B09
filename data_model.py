@@ -77,5 +77,6 @@ class BudgetRules:
 
 @dataclass    
 class CurrentState:
+    total_income: TotalIncome 
     transactions: List[Transaction] = field(default_factory=list)
     budget_rules: List[BudgetRules] = field(default_factory=list)
