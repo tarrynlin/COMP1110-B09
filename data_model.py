@@ -17,6 +17,17 @@ class AlertType(Enum):
     CRITICAL = "Critical"
 
 @dataclass
+class TotalIncome:
+    total : float
+    current : float
+
+    def toDict(self) -> dict:
+        return {
+            "total": self.total,
+            "current": self.current
+        }
+
+@dataclass
 class Transaction:
     date : datetime
     amount : float
