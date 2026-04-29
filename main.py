@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from datetime import datetime
 from typing import Optional, List
-from data_model import Category, Transaction, CurrentState, AlertType, BudgetRules
+from data_model import Category, Transaction, CurrentState, AlertType, BudgetRules, TotalIncome
 from file_handling import FileHandler
 from summaries import SummaryEngine
 from alerts import AlertEngine
@@ -32,6 +32,7 @@ class main_GUI:
         self.tabview.pack(fill="both", expand=True, padx=10, pady=10)
 
         #tabs
+        self.tab_income = self.tabview.add("Set Income")
         self.tab_transactions = self.tabview.add("Transactions")
         self.tab_budgets = self.tabview.add("Budget Rules")
         self.tab_summary = self.tabview.add("Summary")
@@ -41,6 +42,7 @@ class main_GUI:
         bottom_frame = ctk.CTkFrame(self.root)
         bottom_frame.pack(fill="x", padx=10, pady=10)
 
+        self.income_tab()
         self.transactions_tab()
         self.budget_rules_tab()
         self.summaries_tab()
@@ -54,7 +56,20 @@ class main_GUI:
         ctk.CTkButton(bottom_frame, text="Save Data", command=self.save_all).pack(side="left", padx=5)
         ctk.CTkButton(bottom_frame, text="Exit", command=self.root.quit).pack(side="right", padx=5)
         ctk.CTkButton(bottom_frame, text="Delete All Data", command=self.clear_all).pack(side="right", padx=5)
-        
+
+
+    def income_tab(self):
+        """set up set income tab"""
+
+        input_frame = ctk.CTkFrame(self.tab_income, height=400)
+        input_frame.pack(fill="x")
+
+        ctk.CTkLabel(input_frame, text="Please enter your net total income to begin budgeting:", font=("Arial", 15)).place(relx=0.35, rely=0.2)
+        self.income_entry = ctk.CTkEntry(input_frame, width=150)
+        self.income_entry.place(relx=0.44, rely=0.3)
+
+        ctk.CTkButton(input_frame, text="Set Total Income", command=self.add_income).place(relx=0.445, rely=0.5)
+
     
     def transactions_tab(self):
         """set up transactions tab"""
@@ -191,6 +206,47 @@ class main_GUI:
         
         """Trev - I have set up buttons that you can use for loading different test data scenarios, use the test_data_generator file to load transactions and budget ruels from json files"""
 
+    def add_income(self):
+        """set up total income"""
+
+        flag = False
+        try:
+            income_str = self.income_entry.get()
+
+            if not income_str:
+                self.show_error("Please fill in the required field")
+                flag = True
+
+            try:
+                income = float(income_str)
+                if income <= 0:
+                    self.show_error("Invalid amount: Please enter a positive number")
+                    flag = True
+            except ValueError:
+                self.show_error("Invalid amount: Please enter a number")
+                flag = True
+        except Exception as e:
+            self.show_error(f"Error: {e}")
+            flag = True
+
+        if not flag:
+            dialog = ctk.CTkToplevel(self.root)
+            dialog.title("Success")
+            dialog.geometry("400x150")
+
+            dialog.focus()
+            
+            ctk.CTkLabel(dialog, text="You have successfully set your total net income", wraplength=350).pack(padx=20, pady=20)
+            ctk.CTkButton(dialog, text="OK", command=dialog.destroy).pack(pady=10)
+
+            dialog.attributes("-topmost", True)
+
+            total = TotalIncome(income, income)
+            self.state.total_income = total
+            saved = FileHandler.save_total(total)
+
+            self.income_entry.delete(0, "end")
+            self.display_budget_rules()
 
     def add_transaction(self):
         """add new transaction with data validation"""
@@ -243,9 +299,13 @@ class main_GUI:
         dialog = ctk.CTkToplevel(self.root)
         dialog.title("Error")
         dialog.geometry("400x150")
+
+        dialog.focus()
+        
         ctk.CTkLabel(dialog, text=message, text_color="red", wraplength=350).pack(padx=20, pady=20)
         ctk.CTkButton(dialog, text="OK", command=dialog.destroy).pack(pady=10)
 
+        dialog.attributes("-topmost", True)
 
     def clear_inputs(self):
         """clear transaction inputs"""
@@ -309,6 +369,18 @@ class main_GUI:
                 if threshold < 0:
                     self.show_error("Invalid amount: Amount cannot be negative")
                     flag = True
+
+                try: 
+                    current = self.state.total_income.current
+                    if threshold > current:
+                        self.show_error("Invalid amount: you have exceeded your income")
+                        flag = True
+                    else:
+                        self.state.total_income.current -= threshold
+                except:
+                    self.show_error("Please set total net income first")
+                    flag = True
+                    
             except ValueError:
                 self.show_error("Invalid amount: Please enter a number")
                 flag = True
@@ -335,6 +407,8 @@ class main_GUI:
         self.budget_box.configure(state="normal")
         self.budget_box.delete("1.0","end")
         budget_rules = self.state.budget_rules
+        if self.state.total_income:
+            self.budget_box.insert("end", f"Income yet to be allocated: {self.state.total_income.current}\n")
 
         if budget_rules:
             for b in budget_rules:
