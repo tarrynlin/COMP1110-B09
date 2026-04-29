@@ -96,12 +96,12 @@ class TestDataGenerator:
     def generate_random_rules(num_rules = 6):
         rules = []
         constraints = {
-            Category.MEALS: (["monthly"], 2000, 4000, 100),
-            Category.TRANSPORT: (["monthly"], 250, 400, 50),
-            Category.SHOPPING: (["monthly"], 200, 1000, 50),
-            Category.ENTERTAINMENT: (["monthly"], 150, 500, 50),
-            Category.OTHER: (["monthly"], 100, 500, 10),
-            Category.UTILITIES: (["monthly"], 500, 1500, 100)
+            Category.MEALS: (["Monthly"], 2000, 4000, 100),
+            Category.TRANSPORT: (["Monthly"], 250, 400, 50),
+            Category.SHOPPING: (["Monthly"], 200, 1000, 50),
+            Category.ENTERTAINMENT: (["Monthly"], 150, 500, 50),
+            Category.OTHER: (["Monthly"], 100, 500, 10),
+            Category.UTILITIES: (["Monthly"], 500, 1500, 100)
         }
 
         selected_cat = random.sample(list(constraints.keys()), num_rules)
