@@ -443,8 +443,12 @@ class main_GUI:
         self.alert_box.configure(state = "normal")
         self.alert_box.delete("1.0", "end")
 
-        active_alerts = AlertEngine.check_alerts(self.state.transactions, self.state.budget_rules)
+        income_value = 0
+        if self.state.total_income:
+            income_value = self.state.total_income.total
 
+        active_alerts = AlertEngine.check_alerts(self.state.transactions, self.state.budget_rules, income_value)
+        
         for alert in active_alerts:
             prefix = "⚠️" if "Warning" in alert or "Notice" in alert else "❌"
             if alert == "Safe within budget.": prefix = "✅"
