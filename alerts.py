@@ -4,11 +4,10 @@ from data_model import Transaction, BudgetRules, Category
 
 class AlertEngine:
     @staticmethod
-    def check_alerts(transactions, rules):
+    def check_alerts(transactions, rules, income_value):
         alerts = []
         now = datetime.now()
 
-        all_spent = sum(t.amount for t in transactions)
         cat_totals = {cat: 0 for cat in Category}
         daily_totals = {}
         uncat_count = 0
@@ -35,6 +34,55 @@ class AlertEngine:
                                 matches.append(t)
                         elif rule.period == "Monthly":
                             if t.date.month == now.month and t.date.year == now.year:
+                                matches.append(t)
+                    
+                total = 0
+                for m in matches:
+                    total += m.amount
+                
+                if total > rule.threshold:
+                    alerts.append(f"OVER LIMIT! [{rule.period}] \"{rule.category.value}\" limit exceeded - ${total:.2f}")
+                elif total > (rule.threshold*0.8):
+                    alerts.append(f"Warning: \"{rule.category.value}\" is approaching your ${rule.threshold:.2f} limit.")
+        
+        elif income_value > 0:
+            default = {
+                Category.TRANSPORT: (0.15, "Transport"),
+                Category.MEALS: (0.35, "Meals"),
+                Category.ENTERTAINMENT: (0.10, "Entertainment"),
+                Category.SHOPPING: (0.20, "Shopping"),
+                Category.UTILITIES: (0.10, "Utilities"),
+                Category.OTHER: (0.10, "Others")
+            }
+            for cat, (percentage, label) in default.items():
+                if cat_totals[cat] > (income_value * percentage):
+                    alerts.append(f"Warning: \"{label}\" is over {int(percentage*100)}%")
+
+        amounts = list(daily_totals.values())
+        if len(amounts)>= 2:
+            avg = sum(amounts)/len(amounts)
+            variance = sum((x - avg)** 2 for x in amounts)/len(amounts)
+            std_dev = math.sqrt(variance)
+
+            today_str = now.strftime("%Y-%m-%d")
+            today_total = daily_totals.get(today_str, 0)
+            if today_total > (avg + 2*std_dev):
+                alerts.append(f"Spending spike today! ${today_total:.2f} is unusually high.")
+            
+            sorted_days = sorted(daily_totals.keys(), reverse = True)
+            streak = 0
+            for day in sorted_days:
+                if daily_totals[day]>avg:
+                    streak += 1
+                else:
+                    break
+            if streak >= 3:
+                alerts.append(f"Warning: {streak}-day overspending streak detected!")
+  
+        if uncat_count >0:
+            alerts.append(f"Notice: {uncat_count} transactions need to be categorized.")
+
+        return alerts if alerts else ["Safe within budget."]                            if t.date.month == now.month and t.date.year == now.year:
                                 matches.append(t)
                     
                 total = 0
