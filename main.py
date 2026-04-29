@@ -186,7 +186,7 @@ class main_GUI:
         ctk.CTkButton(test_frame, text="Scenario 3: Empty", 
                       command = lambda: self.load_test_scenario("empty")).pack(pady=10)
 
-     def load_test_scenario(self, mode):
+    def load_test_scenario(self, mode):
         if mode == "realistic":
             trans, rules = TestDataGenerator.generate_sample_data(days = 30)
         elif mode == "overspend":
