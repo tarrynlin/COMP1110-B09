@@ -159,7 +159,7 @@ class FileHandler:
     def load_state() -> Tuple[CurrentState, List[str]]:
         total, to_errors = FileHandler.load_total()
         trans, tr_errors = FileHandler.load_trans()
-        rules, r_errors = FileHandler.load_budget_rules()
+        rules, r_errors = FileHandler.load_budget_rules(total)
 
         return CurrentState(
             total_income = total,
