@@ -2,7 +2,7 @@ import json
 import os
 from typing import List, Tuple
 from datetime import datetime
-from data_model import Transaction, BudgetRules, Category, CurrentState, AlertType
+from data_model import Transaction, BudgetRules, Category, CurrentState, AlertType, TotalIncome
 
 class FileHandler:
     TRANSACTIONS = "transactions.json"
@@ -55,7 +55,7 @@ class FileHandler:
             return False
         
     @staticmethod    
-    def load_budget_rules() -> Tuple[List[BudgetRules], List[str]]:
+    def load_budget_rules(total: TotalIncome) -> Tuple[List[BudgetRules], List[str]]:
         errors = []
         try:
             if not os.path.isfile(FileHandler.BUDGET_RULES):
@@ -73,13 +73,20 @@ class FileHandler:
                         period_str = ["Daily", "Weekly", "Monthly"]
                         thr_flag = i["threshold"] < 0
                         period_flag = i["period"] not in period_str
-                        if thr_flag or period_flag:
-                            if thr_flag:
-                                errors.append(f"Transaction {index+1}: Threshold is not a positive number")
-                            if period_flag:
-                                errors.append(f"Transaction {index+1}: Period is not valid")
-                        else:
-                            budget.append(BudgetRules.fromDict(i))
+
+                        try:
+                            total_flag = i["threshold"] > total.current
+                            if thr_flag or period_flag:
+                                if thr_flag:
+                                    errors.append(f"Transaction {index+1}: Threshold is not a positive number")
+                                if period_flag:
+                                    errors.append(f"Transaction {index+1}: Period is not valid")
+                                if total_flag:
+                                    errors.append(f"Budget rules threshold exceeds total income. Budget rules after {index+1} will be ignored")
+                            else:
+                                budget.append(BudgetRules.fromDict(i))
+                        except:
+                            errors.append("Error loading budget rule: Total income not yet set")
                     except Exception as e:
                         errors.append(f"Budget rule {index+1}: {str(e)}")
                         continue
@@ -100,26 +107,75 @@ class FileHandler:
             return True
         except Exception:
             return False
+
+    @staticmethod   
+    def load_total() -> Tuple[TotalIncome, List[str]]:
+        errors = []
+
+        try:
+            if not os.path.isfile(FileHandler.TOTAL):
+                return None, []
+            
+            with open(FileHandler.TOTAL, 'r') as f:
+                content = f.read().strip()
+                if not content:
+                    return None, []
+                
+                data = json.loads(content) 
+                if not data:
+                    return None, []
+                
+                try:
+                    total = TotalIncome(data["total"], data["current"])
+
+                    if total.total <= 0 or total.current <= 0:
+                        errors.append("Total income is not a positive number")
+                    return total, []
+                
+                except Exception as e:
+                    errors.append(f"Error loading total income: {e}")
+
+        except json.JSONDecodeError as e:
+            errors.append(f"Malformed total income file: {str(e)}")
+
+        except Exception as e:
+            errors.append(f"Error loading total income: {str(e)}")
+            
+        return None, errors
+        
+    @staticmethod   
+    def save_total(total: TotalIncome) -> bool:
+        try:
+            data = total.toDict()
+            with open(FileHandler.TOTAL, 'w') as f:
+                json.dump(data, f)
+            return True
+        except Exception as e:
+            print(e)
+            return False
           
 
     @staticmethod    
     def load_state() -> Tuple[CurrentState, List[str]]:
-        trans, t_errors = FileHandler.load_trans()
+        total, to_errors = FileHandler.load_total()
+        trans, tr_errors = FileHandler.load_trans()
         rules, r_errors = FileHandler.load_budget_rules()
 
         return CurrentState(
+            total_income = total,
             transactions = trans,
             budget_rules = rules
-        ), t_errors+r_errors
+        ), to_errors+tr_errors+r_errors
     
     
 
     @staticmethod
     def save_state(state: CurrentState) -> Tuple[bool, str]:
+        total_save = FileHandler.save_total(state.total_income)
         trans_save = FileHandler.save_trans(state.transactions)
         budget_save = FileHandler.save_budget_rules(state.budget_rules)
 
-        if trans_save and budget_save:
+        if total_save and trans_save and budget_save:
             return True, "Data saved succesfully"
         else:
             return False, "Error: data not saved"
@@ -129,6 +185,10 @@ class FileHandler:
     def delete_all(state: CurrentState):
         state.transactions.clear()
         state.budget_rules.clear()
+        state.total_income = None
+
+        with open(FileHandler.TOTAL, 'w') as f:
+            json.dump({}, f)
 
         with open(FileHandler.TRANSACTIONS, 'w') as f:
             json.dump({}, f)
