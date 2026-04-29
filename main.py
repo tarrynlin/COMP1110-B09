@@ -376,7 +376,18 @@ class main_GUI:
                         self.show_error("Invalid amount: you have exceeded your income")
                         flag = True
                     else:
-                        self.state.total_income.current -= threshold
+                        subtract = 0
+                        
+                        repeat_cat = [rule for rule  in self.state.budget_rules if rule .category == Category(category)]        #checking if a budget rule with the same category has been set before
+                        if repeat_cat:
+                            for match in repeat_cat:
+                                if threshold <= match.threshold: continue
+                                else:
+                                    subtract += threshold - match.threshold
+                        else:
+                            subtract = threshold
+
+                        self.state.total_income.current -= subtract 
                 except:
                     self.show_error("Please set total net income first")
                     flag = True
