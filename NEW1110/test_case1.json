@@ -1,0 +1,66 @@
+{
+  "total_income": {
+    "total": 4757.80,
+    "current": 5316.50
+  },
+  "transactions": [
+    { "date": "2026-03-01T15:23:08", "amount": 11.50, "category": "Meals", "description": "Tea" },
+    { "date": "2026-03-03T12:45:22", "amount": 56.50, "category": "Meals", "description": "McDonald" },
+    { "date": "2026-04-01T10:00:00", "amount": 350.00, "category": "Utilities", "description": "Electricity" },
+    { "date": "2026-03-04T17:33:34", "amount": 5.10, "category": "Transport", "description": "Bus" },
+    { "date": "2026-03-05T11:54:06", "amount": 56.20, "category": "Meals", "description": "Café de Coral" },
+    { "date": "2026-03-06T19:30:02", "amount": 23.00, "category": "Entertainment", "description": "Game" },
+    { "date": "2026-03-06T23:52:54", "amount": 3.42, "category": "Shopping", "description": "TaoBao" },
+    { "date": "2026-03-07T12:50:20", "amount": 56.50, "category": "Meals", "description": "McDonald" },
+    { "date": "2026-03-07T20:07:39", "amount": 78.00, "category": "Entertainment", "description": "Game" },
+    { "date": "2026-03-07T20:26:42", "amount": 4.50, "category": "Transport", "description": "Minibus" },
+    { "date": "2026-03-07T21:32:27", "amount": 69.50, "category": "Meals", "description": "Canteen" },
+    { "date": "2026-03-11T18:43:11", "amount": 58.00, "category": "Shopping", "description": "Chips" },
+    { "date": "2026-03-13T18:52:45", "amount": 984.79, "category": "Shopping", "description": "TaoBao" },
+    { "date": "2026-03-14T14:30:14", "amount": 72.00, "category": "Meals", "description": "Milktea" },
+    { "date": "2026-03-17T13:36:36", "amount": 56.50, "category": "Meals", "description": "McDonald" },
+    { "date": "2026-03-17T21:50:22", "amount": 88.00, "category": "Entertainment", "description": "Game" },
+    { "date": "2026-03-18T21:56:08", "amount": 158.00, "category": "Other", "description": "Commission" },
+    { "date": "2026-03-19T07:29:09", "amount": 50.00, "category": "Meals", "description": "Saizeriya" },
+    { "date": "2026-03-19T11:54:12", "amount": 53.05, "category": "Meals", "description": "Café de Coral" },
+    { "date": "2026-03-22T18:06:48", "amount": 88.00, "category": "Entertainment", "description": "Game" },
+    { "date": "2026-03-24T08:30:04", "amount": 36.00, "category": "Meals", "description": "Milktea" },
+    { "date": "2026-03-24T12:29:00", "amount": 56.50, "category": "Meals", "description": "Canteen" },
+    { "date": "2026-03-26T11:56:37", "amount": 56.20, "category": "Meals", "description": "Café de Coral" },
+    { "date": "2026-03-27T13:44:41", "amount": 56.50, "category": "Meals", "description": "Canteen" },
+    { "date": "2026-03-31T12:05:55", "amount": 45.00, "category": "Meals", "description": "Saizeriya" },
+    { "date": "2026-03-31T18:48:15", "amount": 198.00, "category": "Uncategorised", "description": "Random stuf" }
+  ],
+  "budget_rules": [
+    {
+      "threshold": 100,
+      "category": "Meals",
+      "period": "Daily",
+      "alert": "Critical"
+    },
+    {
+      "threshold": 500,
+      "category": "Shopping",
+      "period": "Monthly",
+      "alert": "Warning"
+    },
+    {
+      "threshold": 30,
+      "category": "Transport",
+      "period": "Daily",
+      "alert":"Warning"
+    },
+    {
+      "threshold": 370,
+      "category": "Utilities",
+      "period": "Weekly",
+      "alert":"Critical"
+    },
+    {
+      "threshold": 400,
+      "category": "Entertainment",
+      "period": "Monthly",
+      "alert":"Warning"
+    }
+  ]
+}

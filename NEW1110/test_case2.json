@@ -1,0 +1,51 @@
+{
+  "total_income": {
+    "total": 1166.40,
+    "current": 7160.54
+  },
+  "transactions": [
+    { "date": "2026-04-02T11:57:37", "amount": 56.20, "category": "Meals", "description": "Café de Coral" },
+    { "date": "2026-04-04T17:18:23", "amount": 100.00, "category": "Other", "description": "to brother" },
+    { "date": "2026-04-04T20:45:16", "amount": 54.00, "category": "Meals", "description": "Dinner" },
+    { "date": "2026-04-04T22:02:49", "amount": 23.00, "category": "Entertainment", "description": "Game" },
+    { "date": "2026-04-07T20:07:08", "amount": 78.00, "category": "Entertainment", "description": "Game" },
+    { "date": "2026-04-09T19:01:21", "amount": 183.50, "category": "Meals", "description": "Hotpot" },
+    { "date": "2026-04-10T14:43:05", "amount": 59.00, "category": "Meals", "description": "SAIZERIYA" },
+    { "date": "2026-04-11T10:04:46", "amount": 50.00, "category": "Meals", "description": "McDonal" },
+    { "date": "2026-04-11T17:54:28", "amount": 6.38, "category": "Transport", "description": "MTR" },
+    { "date": "2026-04-13T12:43:22", "amount": 58.00, "category": "Meals", "description": "SAIZERIYA" },
+    { "date": "2026-04-14T15:48:17", "amount": 257.40, "category": "Shopping", "description": "Jjba merch" },
+    { "date": "2026-04-15T10:54:41", "amount": 38.00, "category": "Meals", "description": "McDonal" },
+    { "date": "2026-04-16T12:17:30", "amount": 55.00, "category": "Shopping", "description": "Cat toys" },
+    { "date": "2026-04-17T12:00:45", "amount": 56.50, "category": "Meals", "description": "Canteen" },
+    { "date": "2026-04-17T21:49:20", "amount": 64.00, "category": "Other", "description": "HONGKONG CHAGEE" },
+    { "date": "2026-04-20T15:10:03", "amount": 95.00, "category": "Other", "description": "Michael Movie" },
+    { "date": "2026-04-21T15:25:32", "amount": 63.00, "category": "Meals", "description": "McDonal" },
+    { "date": "2026-04-23T09:56:27", "amount": 48.88, "category": "Meals", "description": "McDonal" },
+    { "date": "2026-04-23T13:07:38", "amount": 30.00, "category": "Meals", "description": "Inforich Asia" },
+    { "date": "2026-04-23T14:06:06", "amount": 58.00, "category": "Meals", "description": "IKEA" },
+    { "date": "2026-04-24T14:08:11", "amount": 63.00, "category": "Meals", "description": "McDonal" },
+    { "date": "2026-04-25T14:03:40", "amount": 58.00, "category": "Meals", "description": "SAIZERIYA" },
+    { "date": "2026-04-28T19:06:28", "amount": 72.00, "category": "Meals", "description": "SUKIYA" }
+  ],
+  "budget_rules": [
+    {
+      "threshold": 1000,
+      "category": "Meals",
+      "period": "Weekly",
+      "alert": "Warning"
+    },
+    {
+      "threshold": 500,
+      "category": "Shopping",
+      "period": "Weekly",
+      "alert": "Critical"
+    },
+    {
+      "threshold": 500,
+      "category": "Entertainment",
+      "period": "Monthly",
+      "alert": "Warning"
+    }
+  ]
+}
