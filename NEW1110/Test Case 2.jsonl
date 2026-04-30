@@ -1,0 +1,511 @@
+{
+  "total_income": {"total": 1370, "current": 1370},  
+  "transactions": [
+    {
+        "date": "2026-04-01T08:43:13",
+        "amount": 21.0,
+        "category": "Meals",
+        "description": "Saandiwch-convenience store"
+    },
+    {
+        "date": "2026-04-01T12:07:24",
+        "amount": 52.0,
+        "category": "Meals",
+        "description": "Lunch from Keeta"
+    },
+    {
+        "date": "2026-04-01T17:05:40",
+        "amount": 13.7,
+        "category": "Transport",
+        "description": "To dinner"
+    },
+    {
+        "date": "2026-04-01T19:01:15",
+        "amount": 72.0,
+        "category": "Meals",
+        "description": "Dinner out"
+    },
+    {
+        "date": "2026-04-01T21:33:12",
+        "amount": 13.7,
+        "category": "Transport",
+        "description": "Back home"
+    },
+    {
+        "date": "2026-04-02T11:07:35",
+        "amount": 3.7,
+        "category": "Transport",
+        "description": "To CK"
+    },
+    {
+        "date": "2026-04-02T12:13:34",
+        "amount": 13.0,
+        "category": "Shopping",
+        "description": "Clothes"
+    },
+    {
+        "date": "2026-04-02T14:16:36",
+        "amount": 13.0,
+        "category": "Transport",
+        "description": "Back home"
+    },
+    {
+        "date": "2026-04-03T10:04:27",
+        "amount": 3.2,
+        "category": "Transport",
+        "description": "Otw uni"
+    },
+    {
+        "date": "2026-04-03T12:33:59",
+        "amount": 43.2,
+        "category": "Meals",
+        "description": "Cafeteria lunch"
+    },
+    {
+        "date": "2026-04-03T18:19:40",
+        "amount": 3.2,
+        "category": "Transport",
+        "description": "Back home"
+    },
+    {
+        "date": "2026-04-03T20:33:11",
+        "amount": 50.0,
+        "category": "Meals",
+        "description": "Dinner"
+    },
+    {
+        "date": "2026-04-04T08:23:45",
+        "amount": 3.2,
+        "category": "Transport",
+        "description": "MTR"
+    },
+    {
+        "date": "2026-04-04T13:49:32",
+        "amount": 17.0,
+        "category": "Meals",
+        "description": "Sandwich"
+    },
+    {
+        "date": "2026-04-04T14:16:36",
+        "amount": 3.2,
+        "category": "Transport",
+        "description": "Back home"
+    },
+    {
+        "date": "2026-04-07T16:28:46",
+        "amount": 17.0,
+        "category": "Transport",
+        "description": "MTR"
+    },
+    {
+        "date": "2026-04-07T17:30:11",
+        "amount": 60.0,
+        "category": "Shopping",
+        "description": "Jewelry"
+    },
+    {
+        "date": "2026-04-07T20:12:29",
+        "amount": 17.0,
+        "category": "Transport",
+        "description": "Back home"
+    },
+    {
+        "date": "2026-04-08T10:45:11",
+        "amount": 6.4,
+        "category": "Transport",
+        "description": "MTR"
+    },
+    {
+        "date": "2026-04-08T12:17:27",
+        "amount": 147.0,
+        "category": "Meals",
+        "description": "Hangout with friends"
+    },
+    {
+        "date": "2026-04-09T10:15:24",
+        "amount": 6.9,
+        "category": "Transport",
+        "description": "MTR"
+    },
+    {
+        "date": "2026-04-09T13:14:55",
+        "amount": 30.0,
+        "category": "Meals",
+        "description": "Lunch at cha chaan teng"
+    },
+    {
+        "date": "2026-04-09T20:15:46",
+        "amount": 70.0,
+        "category": "Uncategorised",
+        "description": "Lost money"
+    },
+    {
+        "date": "2026-04-09T21:02:40",
+        "amount": 6.9,
+        "category": "Transport",
+        "description": "Back home"
+    },
+    {
+        "date": "2026-04-10T13:16:36",
+        "amount": 6.4,
+        "category": "Transport",
+        "description": "MTR"
+    },
+    {
+        "date": "2026-04-10T14:19:12",
+        "amount": 80,
+        "category": "Entertainment",
+        "description": "Claw machine"
+    },
+    {
+        "date": "2026-04-10T17:22:35",
+        "amount": 9.7,
+        "category": "Transport",
+        "description": "Back home"
+    },
+    {
+        "date": "2026-04-11T09:12:56",
+        "amount": 7.6,
+        "category": "Transport",
+        "description": "MTR"
+    },
+    {
+        "date": "2026-04-11T13:56:56",
+        "amount": 60.0,
+        "category": "Meals",
+        "description": "lunch"
+    },
+    {
+        "date": "2026-04-11T18:28:19",
+        "amount": 6.4,
+        "category": "Transport",
+        "description": "Back home"
+    },
+    {
+        "date": "2026-04-15T12:01:39",
+        "amount": 82.0,
+        "category": "Meals",
+        "description": "Mukbang pt1"
+    },
+    {
+        "date": "2026-04-15T13:17:46",
+        "amount": 38.7,
+        "category": "Meals",
+        "description": "Mukbang pt2"
+    },
+    {
+        "date": "2026-04-15T14:03:01",
+        "amount": 12.0,
+        "category": "Meals",
+        "description": "Boba break"
+    },
+    {
+        "date": "2026-04-15T18:59:55",
+        "amount": 174.9,
+        "category": "Meals",
+        "description": "Last mukbang(dinner)"
+    },
+    {
+        "date": "2026-04-16T11:21:41",
+        "amount": 30.0,
+        "category": "Transport",
+        "description": "Bus"
+    },
+    {
+        "date": "2026-04-16T12:22:17",
+        "amount": 177.30,
+        "category": "Meals",
+        "description": "lunch hangout"
+    },
+    {
+        "date": "2026-04-16T14:20:19",
+        "amount": 20.0,
+        "category": "Uncategorised",
+        "description": "Donation"
+    },
+    {
+        "date": "2026-04-16T16:14:16",
+        "amount": 11.0,
+        "category": "Utilities",
+        "description": "Laundry"
+    },
+    {
+        "date": "2026-04-17T07:13:26",
+        "amount": 6.0,
+        "category": "Utilities",
+        "description": "Dryer"
+    },
+    {
+        "date": "2026-04-17T08:21:32",
+        "amount": 3.2,
+        "category": "Transport",
+        "description": "MTR"
+    },
+    {
+        "date": "2026-04-17T16:16:16",
+        "amount": 35.56,
+        "category": "Uncategorised",
+        "description": "None"
+    },
+    {
+        "date": "2026-04-17T19:16:36",
+        "amount": 13.0,
+        "category": "Transport",
+        "description": "Back home"
+    },
+    {
+        "date": "2026-04-19T11:27:44",
+        "amount": 3.2,
+        "category": "Transport",
+        "description": "MTR"
+    },
+    {
+        "date": "2026-04-19T12:56:11",
+        "amount": 43.99,
+        "category": "Meals",
+        "description": "Lunch"
+    },
+    {
+        "date": "2026-04-19T13:55:19",
+        "amount": 3.2,
+        "category": "Transport",
+        "description": "Back home"
+    },
+    {
+        "date": "2026-04-21T09:11:37",
+        "amount": 6.9,
+        "category": "Transport",
+        "description": "MTR"
+    },
+    {
+        "date": "2026-04-21T11:25:37",
+        "amount": 14.0,
+        "category": "Uncategorised",
+        "description": "None"
+    },
+    {
+        "date": "2026-04-21T14:22:38",
+        "amount": 95.30,
+        "category": "Meals",
+        "description": "Lunch"
+    },
+    {
+        "date": "2026-04-22T17:28:28",
+        "amount": 11.0,
+        "category": "Utilities",
+        "description": "Laundry"
+    },
+    {
+        "date": "2026-04-23T08:28:39",
+        "amount": 3.2,
+        "category": "Meals",
+        "description": "Breakfast"
+    },
+    {
+        "date": "2026-04-23T11:40:46",
+        "amount": 6.5,
+        "category": "Transport",
+        "description": "MTR"
+    },
+    {
+        "date": "2026-04-23T12:17:38",
+        "amount": 151.8,
+        "category": "Meals",
+        "description": "Lunch"
+    },
+    {
+        "date": "2026-04-24T11:56:29",
+        "amount": 3.2,
+        "category": "Transport",
+        "description": "MTR"
+    },
+    {
+        "date": "2026-04-24T18:29:43",
+        "amount": 3.2,
+        "category": "Transport",
+        "description": "Back home"
+    },
+    {
+        "date": "2026-04-26T10:27:16",
+        "amount": 3.2,
+        "category": "Transport",
+        "description": "MTR"
+    },
+    {
+        "date": "2026-04-26T13:17:18",
+        "amount": 44.0,
+        "category": "Meals",
+        "description": "Lunch"
+    },
+    {
+        "date": "2026-04-27T09:11:33",
+        "amount": 3.2,
+        "category": "Transport",
+        "description": "MTR"
+    },
+    {
+        "date": "2026-04-27T12:06:06",
+        "amount": 49.5,
+        "category": "Meals",
+        "description": "Lunch"
+    },
+    {
+        "date": "2026-04-27T18:26:26",
+        "amount": 3.2,
+        "category": "Transport",
+        "description": "mtr"
+    },
+    {
+        "date": "2026-04-27T19:26:45",
+        "amount": 238.0,
+        "category": "Meals",
+        "description": "Fancy dinnerrr"
+    },
+    {
+        "date": "2026-04-27T21:16:36",
+        "amount": 10.0,
+        "category": "Utilities",
+        "description": "Electricity"
+    },
+    {
+        "date": "2026-04-27T22:06:07",
+        "amount": 35.0,
+        "category": "Transport",
+        "description": "Back home"
+    },
+    {
+        "date": "2026-04-29T07:28:47",
+        "amount": 3.2,
+        "category": "Transport",
+        "description": "mtr"
+    },
+    {
+        "date": "2026-04-29T12:29:17",
+        "amount": 44.0,
+        "category": "Meals",
+        "description": "Lunchhhh"
+    },
+    {
+        "date": "2026-04-29T16:34:28",
+        "amount": 13.0,
+        "category": "Transport",
+        "description": "MTR again"
+    },
+    {
+        "date": "2026-04-29T18:29:16",
+        "amount": 14.0,
+        "category": "Meals",
+        "description": "little snack"
+    },
+    {
+        "date": "2026-04-29T19:36:25",
+        "amount": 42.5,
+        "category": "Meals",
+        "description": "Dinner chinese food"
+    },
+    {
+        "date": "2026-04-30T03:09:46",
+        "amount": 11.0,
+        "category": "Utilities",
+        "description": "Laundry"
+    },
+    {
+        "date": "2026-04-30T11:28:33",
+        "amount": 17.0,
+        "category": "Entertainment",
+        "description": "Bet with friends"
+    },
+    {
+        "date": "2026-04-30T13:11:55",
+        "amount": 211.0,
+        "category": "Meals",
+        "description": "Lunch with the friendgroup haha"
+    },
+    {
+        "date": "2026-04-30T15:22:29",
+        "amount": 43.0,
+        "category": "Meals",
+        "description": "Boba drink"
+    },
+    {
+        "date": "2026-04-30T18:29:47",
+        "amount": 3.2,
+        "category": "Transport",
+        "description": "Back home"
+    }
+  ],
+  "budget_rules": [
+    {
+        "threshold": 700.0,
+        "category": "Meals",
+        "period": "Monthly",
+        "alert": "Warning"
+    },
+    {
+        "threshold": 800.0,
+        "category": "Meals",
+        "period": "Monthly",
+        "alert": "Critical"
+    },
+    {
+        "threshold": "60.0",
+        "category": "Shopping",
+        "period": "Weekly",
+        "alert": "Warning"
+    },
+    {
+        "threshold": "100.0",
+        "category": "Shopping",
+        "period": "Weekly",
+        "alert": "Critical"
+    },
+    {
+        "threshold": 50.0,
+        "category": "Transport",
+        "period": "Daily",
+        "alert": "Warning"
+    },
+    {
+        "threshold": 100.0,
+        "category": "Transport",
+        "period": "Daily",
+        "alert": "Critical"
+    },
+    {
+        "threshold": 70.0,
+        "category": "Utilities",
+        "period": "Monthly",
+        "alert": "Critical"  
+    },
+    {
+        "threshold": 50.0,
+        "category": "Utilities",
+        "period": "Monthly",
+        "alert": "Warning"  
+    },
+    {
+        "threshold": 100.0,
+        "category": "Entertainment",
+        "period": "Daily",
+        "alert": "Critical"  
+    },
+    {
+        "threshold": 80.0,
+        "category": "Entertainment",
+        "period": "Daily",
+        "alert": "Warning"  
+    },
+    {
+        "threshold": 150.0,
+        "category": "Uncategorised",
+        "period": "Monthly",
+        "alert": "Warning"  
+    },
+    {
+        "threshold": 200.0,
+        "category": "Uncategorised",
+        "period": "Monthly",
+        "alert": "Critical"  
+    }
+  ]
+}
