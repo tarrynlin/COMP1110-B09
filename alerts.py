@@ -6,7 +6,7 @@ class AlertEngine:
     @staticmethod
     def check_alerts(transactions, rules, income_value):
         alerts = []
-        now = datetime.now()
+        now = max((t.date for t in transactions), default=datetime.today())
 
         cat_totals = {cat: 0 for cat in Category}
         daily_totals = {}
@@ -21,18 +21,27 @@ class AlertEngine:
             daily_totals[day_key] = daily_totals.get(day_key, 0) + t.amount
         
         if len(rules) > 0:
+            # Group rules by category and period to handle multiple alert types
+            rule_groups = {}
             for rule in rules:
+                key = (rule.category, rule.period)
+                if key not in rule_groups:
+                    rule_groups[key] = []
+                rule_groups[key].append(rule)
+            
+            # Process each category-period combination
+            for (category, period), group_rules in rule_groups.items():
                 matches = []
                 for t in transactions:
-                    if t.category == rule.category:
-                        if rule.period == "Daily":
+                    if t.category == category:
+                        if period == "Daily":
                             if t.date.date() == now.date():
                                 matches.append(t)
-                        elif rule.period == "Weekly":
+                        elif period == "Weekly":
                             time_diff = now - t.date
-                            if time_diff.days <= 7:
+                            if time_diff.days < 7:
                                 matches.append(t)
-                        elif rule.period == "Monthly":
+                        elif period == "Monthly":
                             if t.date.month == now.month and t.date.year == now.year:
                                 matches.append(t)
                     
@@ -40,14 +49,52 @@ class AlertEngine:
                 for m in matches:
                     total += m.amount
                 
-                if rule.threshold > 0:
-                    usage = total/rule.threshold
-                    if usage >=1.0:
-                        alerts.append(f"OVER LIMIT! [{rule.period}] {rule.category.value} limit exceeded - ${total:.2f}")
-                    elif usage >= 0.95:
-                        alerts.append(f"[CRITICAL] {rule.category.value} is at {usage*100:.1f}%! (Only 5% left)")
-                    elif usage >= 0.85:
-                        alerts.append(f"[WARNING] {rule.category.value} is at {usage*100:.1f}%! of your limit.")
+                 # Sort rules by threshold (ascending) to check warning before critical
+                sorted_rules = sorted(group_rules, key=lambda r: r.threshold)
+                
+                # Track the highest threshold exceeded
+                highest_alert = None
+                highest_usage = 0
+                
+                for rule in sorted_rules:
+                    if rule.threshold > 0:
+                        usage = total / rule.threshold
+                        
+                        # Check if this rule's threshold is exceeded
+                        if usage >= 1.0:
+                            alert_type = rule.alert.value
+                            alert_msg = f"{alert_type}! [{period}] {category.value} spending has reached ${total:.2f}, {(total - rule.threshold):.2f} over limit!"
+                            
+                            
+                            # Track the most severe alert (Critical > Warning)
+                            if highest_alert is None:
+                                highest_alert = (alert_msg, alert_type, usage)
+                            elif alert_type == "Critical" and highest_alert[1] == "Warning":
+                                # Replace warning with critical if critical threshold is higher
+                                if rule.threshold > sorted_rules[0].threshold:
+                                    highest_alert = (alert_msg, alert_type, usage)
+                        elif usage >= 0.95:
+                            alert_msg = f"{rule.alert.value}! [{period}] {category.value} is at {usage*100:.1f}% of your limit! (Only {int((1-usage)*100)}% left)"
+                            alert_type = rule.alert.value
+                            
+                            if highest_alert is None:
+                                highest_alert = (alert_msg, alert_type, usage)
+                            elif alert_type == "Critical" and highest_alert[1] == "Warning":
+                                highest_alert = (alert_msg, alert_type, usage)
+                        elif usage >= 0.85:
+                            alert_msg = f"{rule.alert.value}! [{period}] {category.value} is at {usage*100:.1f}%! of your limit!"
+                            alert_type = rule.alert.value
+                            
+                            if highest_alert is None:
+                                highest_alert = (alert_msg, alert_type, usage)
+                            elif alert_type == "Critical" and highest_alert[1] == "Warning":
+                                highest_alert = (alert_msg, alert_type, usage)
+                        
+                
+                # Add the most severe alert for this category-period combination
+                if highest_alert:
+                    alerts.append(highest_alert[0])
+                
                     
         elif income_value > 0:
             default = {
@@ -56,34 +103,35 @@ class AlertEngine:
                 Category.ENTERTAINMENT: (0.10, "Entertainment"),
                 Category.SHOPPING: (0.20, "Shopping"),
                 Category.UTILITIES: (0.10, "Utilities"),
-                Category.OTHER: (0.10, "Others")
+                Category.OTHER: (0.10, "Other"),
+                Category.UNCATEGORISED: (0.0, "Uncategorised")
             }
             for cat, (percentage, label) in default.items():
-                if cat_totals[cat] > (income_value * percentage):
-                    alerts.append(f"Warning: \"{label}\" is over {int(percentage*100)}%")
+                if percentage > 0 and cat_totals[cat] > (income_value * percentage):
+                    alerts.append(f"Warning: \"{label}\" spending is over {int(percentage*100)}% of your budget")
 
         amounts = list(daily_totals.values())
-        if len(amounts)>= 2:
+        if len(amounts) >= 2:
             avg = sum(amounts)/len(amounts)
             variance = sum((x - avg)** 2 for x in amounts)/len(amounts)
             std_dev = math.sqrt(variance)
 
             today_str = now.strftime("%Y-%m-%d")
             today_total = daily_totals.get(today_str, 0)
-            if today_total > (avg + 2*std_dev):
+            if today_total > 0 and today_total > (avg + 2*std_dev):
                 alerts.append(f"Spending spike today! ${today_total:.2f} is unusually high.")
             
-            sorted_days = sorted(daily_totals.keys(), reverse = True)
+            sorted_days = sorted(daily_totals.keys(), reverse=True)
             streak = 0
             for day in sorted_days:
-                if daily_totals[day]>avg:
+                if daily_totals[day] > avg:
                     streak += 1
                 else:
                     break
             if streak >= 3:
                 alerts.append(f"Warning: {streak}-day overspending streak detected!")
   
-        if uncat_count >0:
-            alerts.append(f"Notice: {uncat_count} transactions need to be categorized.")
+        if uncat_count > 0:
+            alerts.append(f"Warning: {uncat_count} transactions are not categorized.")
 
         return alerts if alerts else ["Safe within budget."]
