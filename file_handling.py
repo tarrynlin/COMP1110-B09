@@ -119,7 +119,21 @@ class FileHandler:
                             if total_flag:
                                 errors.append(f"Budget rules threshold exceeds total income. Budget rules after {index+1} will be ignored")
                         else:
-                            current -= i["threshold"]               #subtract threshold from remaining income
+                            subtract = 0
+                            
+                            # Ensures that if there are duplicate categories, only the largest amount in each category is subtracted from the remaining income
+                            from data_model import Category
+                            repeat_cat = [rule for rule in budget if rule.category == Category(i['category'])]
+                            if repeat_cat:
+                                for match in repeat_cat:
+                                    if i["threshold"] <= match.threshold:
+                                        continue
+                                    else:
+                                        subtract += i["threshold"] - match.threshold
+                            else:
+                                subtract = i["threshold"]
+                            
+                            current -= subtract
                             budget.append(BudgetRules.fromDict(i))
         
                     except Exception as e:
@@ -220,7 +234,6 @@ class FileHandler:
             transactions = trans, 
             budget_rules = rules
         ), to_errors+tr_errors+r_errors
-    
     
 
     @staticmethod
