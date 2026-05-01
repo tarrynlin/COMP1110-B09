@@ -52,8 +52,13 @@ class Transaction:
 
     @staticmethod
     def fromDict(data: dict) -> 'Transaction':
+        date_raw = data["date"]
+        if "T" in date_raw:
+            date_obj = datetime.fromisoformat(date_raw)
+        else:
+            date_obj = datetime.strptime(date_raw, "%Y-%m-%d")
         return Transaction(
-            date=datetime.fromisoformat(data["date"]),
+            date=date_obj,
             amount=float(data["amount"]),
             category=Category(data["category"]),
             description=data["description"]
