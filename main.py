@@ -356,7 +356,7 @@ class main_GUI:
 
         dialog = ctk.CTkToplevel(self.root)
         dialog.title("Error")
-        dialog.geometry("400x150")
+        dialog.geometry("400x260")
 
         dialog.focus()
         dialog.attributes("-topmost", True)
