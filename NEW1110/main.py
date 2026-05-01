@@ -92,7 +92,7 @@ class main_GUI:
         self.amount_entry.place(relx=0.16, rely=0.35)
 
         ctk.CTkLabel(input_frame, text="Category:").place(relx=0.03, rely=0.5)
-        self.category = ctk.StringVar(value=Category.OTHER.value)       #default value is "Other"
+        self.category = ctk.StringVar(value=Category.UNCATEGORISED.value)       #default value is "Uncategorised"
         self.category_menu = ctk.CTkOptionMenu(input_frame, values=[c.value for c in Category], variable=self.category).place(relx=0.16, rely=0.5)
 
         ctk.CTkLabel(input_frame, text="Description:").place(relx=0.03, rely=0.65)
