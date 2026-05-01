@@ -201,4 +201,3 @@ class FileHandler:
         with open(FileHandler.BUDGET_RULES, 'w') as f:
             json.dump([], f)
         
-
