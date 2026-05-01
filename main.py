@@ -494,7 +494,7 @@ class main_GUI:
         self.budget_box.delete("1.0","end")
         
         if self.state.total_income:
-            self.budget_box.insert("end", f"Income yet to be allocated: {self.state.total_income.current}\n")
+            self.budget_box.insert("end", f"Income yet to be allocated: ${self.state.total_income.current: .2f}\n")
 
         if self.state.budget_rules:
             for b in self.state.budget_rules:
