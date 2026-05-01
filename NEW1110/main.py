@@ -355,8 +355,6 @@ class main_GUI:
         ctk.CTkButton(dialog, text="OK", command=dialog.destroy).pack(pady=10)
 
         
-
-    
     def show_success_dialog(self, message:str):
         """
         This function displays a success window
@@ -543,8 +541,8 @@ class main_GUI:
             self.alert_box.insert("end", prefix + alert + "\n")
         
         self.alert_box.configure(state = "disabled")
-    #
 
+    
     def save_all(self):
         """
         This function saves all transaction and budget rule data into json files
@@ -552,6 +550,7 @@ class main_GUI:
 
         FileHandler.save_state(self.state)
 
+    
     def clear_all(self):
         """
         This function clears all data from CurrentState and empties json files
