@@ -101,7 +101,7 @@ class main_GUI:
 
         ctk.CTkButton(input_frame, text="Add Transaction",command=self.add_transaction).place(relx=0.16, rely=0.85)
 
-        self.transaction_box = ctk.CTkTextbox(input_frame, width=650, height=850)
+        self.transaction_box = ctk.CTkTextbox(input_frame, width=600, height=300)
         self.transaction_box.configure(state="disabled")
         self.transaction_box.place(relx=0.4, rely=0.2)
 
@@ -136,7 +136,7 @@ class main_GUI:
 
         ctk.CTkButton(input_frame, text="Add Budget Rule", command=self.add_budget_rules).place(relx=0.16, rely=0.85)
 
-        self.budget_box = ctk.CTkTextbox(input_frame, width=650, height=850)
+        self.budget_box = ctk.CTkTextbox(input_frame, width=600, height=300)
         self.budget_box.configure(state="disabled")
         self.budget_box.place(relx=0.4, rely=0.1)
 
@@ -186,8 +186,7 @@ class main_GUI:
 
         ctk.CTkButton(test_frame, text="Scenario 1: Realistic 30 Days", command = lambda: self.load_test_scenario("realistic")).pack(pady=10)
         ctk.CTkButton(test_frame, text="Scenario 2: Overspend", command = lambda: self.load_test_scenario("overspend")).pack(pady=10)
-        ctk.CTkButton(test_frame, text="Scenario 3: Empty", command = lambda: self.load_test_scenario("empty")).pack(pady=10)
-        ctk.CTkButton(test_frame, text="Load Custom JSON Scenario", command = self.load_custom_json_scenario).pack(pady=10)
+        ctk.CTkButton(test_frame, text="Load Custom JSON Scenario", command = self.load_custom_json_scenario).pack(pady=20)
 
     
     def load_test_scenario(self, mode):
@@ -205,7 +204,7 @@ class main_GUI:
         self.state.transactions = trans
         self.state.budget_rules = rules
 
-        total_spent = sum(t.amount for t in trans)
+        total_spent = sum(r.threshold for r in rules)
         remaining = income - total_spent
         self.state.total_income = TotalIncome(total=float(income), current = float(remaining))
 
@@ -224,33 +223,43 @@ class main_GUI:
 
     def load_custom_json_scenario(self):
         """
-        This function loads in custom scenarios from json files
+        This function loads in custom scenarios from json files using FileHandler methods
         """
         
-        from tkinter import filedialog
         file = filedialog.askopenfilename(
             filetypes = [("JSON files", "*.json"), ("JSONL files", "*.jsonl")],
             title = "Select Scenario File"
         )
 
         if file:
-            result, message = TestDataGenerator.load_json(file)
+            result, errors = TestDataGenerator.load_json(file)
+            
             if result:
-                trans, rules, income = result
+                trans, rules, income, current = result
                 self.state.transactions = trans
                 self.state.budget_rules = rules
 
-                from data_model import TotalIncome
-                self.state.total_income = TotalIncome(float(income), current=float(income))
+                
+                self.state.total_income = TotalIncome(float(income), float(current))
+                
                 self.display_transactions()
                 self.display_budget_rules()
                 self.display_summaries()
                 self.display_alerts()
 
-                self.show_success_dialog("You have successfully loaded the custom JSON scenario")
+                # Display validation errors if any occurred during loading
+                if errors:
+                    error_message = "Successfully loaded with the following warnings:\n\n" + "\n".join(errors)
+                    self.show_error(error_message)
+                else:
+                    self.show_success_dialog("You have successfully loaded the custom JSON scenario")
             
             else:
-                self.show_error(f"Failed to load: {message}")
+                # Display critical errors that prevented loading
+                error_message = "Failed to load:\n\n" + "\n".join(errors)
+                self.show_error(error_message)
+     
+ 
         
     
     def add_income(self):
@@ -410,7 +419,7 @@ class main_GUI:
 
         if trans:
             for t in trans:
-                text = f"[{t.date.strftime('%Y-%m-%d')}] {t.category.value}: ${t.amount:.2f} - {t.description}"
+                text = f"[{t.date.strftime('%Y-%m-%d %H:%M:%S')}] {t.category.value}: ${t.amount:.2f} - {t.description}"
                 self.transaction_box.insert("end", text + "\n")
             
         else:
@@ -494,7 +503,8 @@ class main_GUI:
         self.budget_box.delete("1.0","end")
         
         if self.state.total_income:
-            self.budget_box.insert("end", f"Income yet to be allocated: ${self.state.total_income.current: .2f}\n")
+            self.budget_box.insert("end", f"Total income: {self.state.total_income.total: .2f}\n")
+            self.budget_box.insert("end", f"Income yet to be allocated: {self.state.total_income.current: .2f}\n")
 
         if self.state.budget_rules:
             for b in self.state.budget_rules:
@@ -513,6 +523,7 @@ class main_GUI:
         
         self.summary_box.configure(state = "normal")
         self.summary_box.delete("1.0", "end")
+
 
         report_lines = SummaryEngine.get_monthly_report(self.state.transactions, total_income_obj=self.state.total_income, mode="monthly")
 
