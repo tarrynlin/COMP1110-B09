@@ -1,10 +1,13 @@
 import random
 from datetime import datetime, timedelta
-from data_model import Transaction, Category, BudgetRules, AlertType
+from data_model import Transaction, Category, BudgetRules, AlertType, CurrentState
+import json
+import os
 
 class TestDataGenerator:
     @staticmethod
     def generate_sample_data(days=30):
+        income = float(random.randrange(3000, 10000, 1000))
         transactions = []
         now = datetime.now()
 
@@ -21,9 +24,15 @@ class TestDataGenerator:
             Category.ENTERTAINMENT: {
                 "price_range": (50, 200),
                 "descriptions": ["Netflix", "Cinema", "Arcade"]},
+            Category.UTILITIES: {
+                "price_range": (300, 1000),
+                "descriptions": ["Water Bill", "Electricity", "Internet", "Phone Plan"]},
+            Category.OTHER: {
+                "price_range": (10, 100),
+                "descriptions": ["Gift", "Donation", "Miscellaneous"]},
             Category.UNCATEGORISED: {
-                "price_range": (50, 200),
-                "descriptions": ["Cash Withdrawal", "Top Up Other"]}
+                "price_range": (20, 100),
+                "descriptions": ["Unnamed Transaction"]}
         }
 
         for d in range(days):
@@ -33,15 +42,19 @@ class TestDataGenerator:
                 descs = details["descriptions"]
 
                 if cat == Category.MEALS:
-                    chance = 0.5
+                    chance = 0.40
                 elif cat == Category.TRANSPORT:
-                    chance = 0.4
+                    chance = 0.30
                 elif cat == Category.SHOPPING:
-                    chance = 0.05
+                    chance = 0.10
                 elif cat == Category.ENTERTAINMENT:
-                    chance = 0.015
+                    chance = 0.065
+                elif cat == Category.UTILITIES:
+                    chance = 0.02
+                elif cat == Category.OTHER:
+                    chance = 0.05
                 else:
-                    chance = 0.035
+                    chance = 0.065
 
                 if random.random() <chance:
                     if cat in [Category.MEALS, Category.TRANSPORT]:
@@ -60,15 +73,17 @@ class TestDataGenerator:
                             amount = round(random.uniform(min_p, max_p), 2)
                         )
                         transactions.append(t)
-        rules = TestDataGenerator.generate_random_rules(num_rules=5)
-        return transactions, rules
+        rules = TestDataGenerator.generate_random_rules(income)
+
+        return transactions, rules, income
 
     @staticmethod
     def generate_empty_scenario():
-        return [], []
+        return [], [], 0.0
     
     @staticmethod
     def generate_overspend_scenario():
+        income = 5000
         transactions = []
 
         for i in range(5):
@@ -79,32 +94,62 @@ class TestDataGenerator:
                 amount = 500.00
             ))
     
-        rules = TestDataGenerator.generate_random_rules(num_rules=3)
-        return transactions, rules
+        rules = TestDataGenerator.generate_random_rules(income)
+        return transactions, rules, income
 
     @staticmethod
-    def generate_random_rules(num_rules = 3):
+    def generate_random_rules(total_income: float):
         rules = []
-        constraints = {
-            Category.MEALS: (["monthly"], 2000, 4000, 100),
-            Category.TRANSPORT: (["monthly"], 250, 400, 50),
-            Category.SHOPPING: (["monthly"], 200, 1000, 50),
-            Category.ENTERTAINMENT: (["monthly"], 150, 500, 50),
-            Category.UNCATEGORISED: (["monthly"], 200, 500, 50)
+        plan = {
+            Category.MEALS: 0.35,
+            Category.TRANSPORT: 0.15,
+            Category.SHOPPING: 0.20,
+            Category.ENTERTAINMENT: 0.10,
+            Category.OTHER: 0.10,
+            Category.UTILITIES: 0.10
         }
 
-        selected_cat = random.sample(list(constraints.keys()), num_rules)
-
-        for cat in selected_cat:
-            timeframes, min_val, max_val, step = constraints[cat]
-            time_frame = random.choice(timeframes)
-            amount = random.randrange(min_val, max_val + step, step)
-
+        for cat, percentage in plan.items():
+            threshold = total_income * percentage
             alert = random.choice([AlertType.WARNING, AlertType.CRITICAL])
             rules.append(BudgetRules(
                 category = cat,
-                period = time_frame,
-                threshold = float(amount),
+                period = "Monthly",
+                threshold = round(threshold, 2),
                 alert = alert
             ))
         return rules
+    
+    @staticmethod
+    def load_json(file_path: str):
+        try:
+            with open(file_path, 'r') as f:
+                data = json.load(f)
+            transactions = []
+            rules = []
+            raw_income = 0.0
+            if isinstance(data, dict):
+                income_data = data.get("total_income", 0.0)
+                if isinstance(income_data, dict):
+                    raw_income = income_data.get("total", 0.0)
+                else:
+                    raw_income = income_data
+                raw_trans = data.get("transactions", []) if isinstance(data, dict) else data
+                raw_rules = data.get("budget_rules", []) if isinstance(data, dict) else []
+                for t in raw_trans:
+                    transactions.append(Transaction.fromDict(t))
+                for r in raw_rules:
+                    rules.append(BudgetRules.fromDict(r))
+            elif isinstance(data, list):
+                for item in data:
+                    try:
+                        transactions.append(Transaction.fromDict(item))
+                    except:
+                        try:
+                            rules.append(BudgetRules.fromDict(item))
+                        except:
+                            continue
+                
+            return (transactions, rules, raw_income), "Success"
+        except Exception as e:
+            return None, f"File Error: {str(e)}"
