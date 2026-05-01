@@ -77,16 +77,27 @@ class FileHandler:
         This method will manually calculate the remaining income using the total income and budget rule thresholds
         """
 
-        current = totalincome.total     #get total income 
         errors = []
+
+        
         try:
             if not os.path.isfile(FileHandler.BUDGET_RULES):
-                return [], [], current
+                return [], [], 0
             
             with open(FileHandler.BUDGET_RULES, 'r') as f:
                 content = f.read().strip()
                 if not content:
-                    return [], [], current
+                    return [], [], 0
+                
+                data = json.loads(content) 
+                if not data:
+                    return [], [], 0
+                
+                if totalincome:
+                    current = totalincome.total     #get total income 
+                else:
+                    errors.append("Error loading budget rule: Total income not yet set")
+                    return [], errors, 0
                 
                 data = json.loads(content)
                 budget = []
@@ -97,21 +108,20 @@ class FileHandler:
                         thr_flag = i["threshold"] <= 0
                         period_flag = i["period"] not in period_str
                         
-                        try:
-                            total_flag = i["threshold"] > current        #check if threshold exceeds remaining income
+                        
+                        total_flag = i["threshold"] > current        #check if threshold exceeds remaining income
 
-                            if thr_flag or period_flag or total_flag:
-                                if thr_flag:
-                                    errors.append(f"Budget rule {index+1}: Threshold is not a positive number")
-                                if period_flag:
-                                    errors.append(f"Budget rule {index+1}: Period is not valid")
-                                if total_flag:
-                                    errors.append(f"Budget rules threshold exceeds total income. Budget rules after {index+1} will be ignored")
-                            else:
-                                current -= i["threshold"]               #subtract threshold from remaining income
-                                budget.append(BudgetRules.fromDict(i))
-                        except:
-                            errors.append("Error loading budget rule: Total income not yet set")
+                        if thr_flag or period_flag or total_flag:
+                            if thr_flag:
+                                errors.append(f"Budget rule {index+1}: Threshold is not a positive number")
+                            if period_flag:
+                                errors.append(f"Budget rule {index+1}: Period is not valid")
+                            if total_flag:
+                                errors.append(f"Budget rules threshold exceeds total income. Budget rules after {index+1} will be ignored")
+                        else:
+                            current -= i["threshold"]               #subtract threshold from remaining income
+                            budget.append(BudgetRules.fromDict(i))
+        
                     except Exception as e:
                         errors.append(f"Budget rule {index+1}: {str(e)}")
                         continue
@@ -202,9 +212,12 @@ class FileHandler:
         trans, tr_errors = FileHandler.load_trans()
         rules, r_errors, current = FileHandler.load_budget_rules(total)
 
+        if total:
+            total = TotalIncome(total.total, current)   #creating a new TotalIncome object with total extracted in load_total and current calculated in load_budget_rules 
+
         return CurrentState(
-            total_income = TotalIncome(total.total, current),    #creating a new TotalIncome object with total extracted in load_total and current calculated in load_budget_rules
-            transactions = trans,
+            total_income = total,   
+            transactions = trans, 
             budget_rules = rules
         ), to_errors+tr_errors+r_errors
     
