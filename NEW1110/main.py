@@ -1,6 +1,5 @@
 import customtkinter as ctk
 from datetime import datetime
-from typing import Optional, List
 from data_model import Category, Transaction, CurrentState, AlertType, BudgetRules, TotalIncome
 from file_handling import FileHandler
 from summaries import SummaryEngine
@@ -10,24 +9,29 @@ from tkinter import filedialog
 
 
 class main_GUI:
-    """main GUI application for simple budgeting tool"""
+    """
+    This is the main GUI application for the budgeting tool
+    """
 
     def __init__(self, root):
         self.root = root
         self.root.title("Budgeting Tool")
         self.root.geometry("1100x600")
-        self.state: CurrentState
-        self.selected_date_filter: Optional[str] = None     
+        self.state: CurrentState        #for loading and saving total income, transactions and budget rules from and into CurrentState      
 
         self.state, load_errors = FileHandler.load_state()
 
+        #display any errors that arise from loading in total income, transactions and budget rules from their respective json files into CurrentState
         if load_errors:
             self.show_error("Errors loading data:\n\n" + "\n".join(load_errors))
 
         self.setup()
 
+    
     def setup(self):
-        """set up UIs"""
+        """
+        This function sets up UIs
+        """
 
         self.tabview = ctk.CTkTabview(self.root)
         self.tabview.pack(fill="both", expand=True, padx=10, pady=10)
@@ -50,16 +54,15 @@ class main_GUI:
         self.alerts_tab()
         self.test_tab()
 
-        #trev added
-        self.display_summaries()
-        self.display_alerts()
-
         ctk.CTkButton(bottom_frame, text="Save Data", command=self.save_all).pack(side="left", padx=5)
         ctk.CTkButton(bottom_frame, text="Exit", command=self.root.quit).pack(side="right", padx=5)
         ctk.CTkButton(bottom_frame, text="Delete All Data", command=self.clear_all).pack(side="right", padx=5)
-        
+
+    
     def income_tab(self):
-        """set up set income tab"""
+        """
+        This function sets up the tab for entering total income
+        """
 
         input_frame = ctk.CTkFrame(self.tab_income, height=400)
         input_frame.pack(fill="x")
@@ -72,7 +75,9 @@ class main_GUI:
 
 
     def transactions_tab(self):
-        """set up transactions tab"""
+        """
+        This function sets up the transactions tab
+        """
 
         input_frame = ctk.CTkFrame(self.tab_transactions, height=400)
         input_frame.pack(fill="x")
@@ -94,7 +99,6 @@ class main_GUI:
         self.description_entry = ctk.CTkEntry(input_frame, width=200)
         self.description_entry.place(relx=0.16, rely=0.65)
 
-
         ctk.CTkButton(input_frame, text="Add Transaction",command=self.add_transaction).place(relx=0.16, rely=0.85)
 
         self.transaction_box = ctk.CTkTextbox(input_frame, width=650, height=850)
@@ -104,12 +108,13 @@ class main_GUI:
         self.filter = ctk.StringVar(value="All")        #default value is "All"
         self.filter_menu = ctk.CTkOptionMenu(input_frame, values=["All"]+[c.value for c in Category], variable=self.filter, command=self.display_transactions).place(relx=0.4, rely=0.1)
 
-        
         self.display_transactions()
 
 
     def budget_rules_tab(self):
-        """set up budget rules tab"""
+        """
+        This function sets up the budget rules tab
+        """
         
         input_frame = ctk.CTkFrame(self.tab_budgets, height=400)
         input_frame.pack(fill="x")
@@ -139,7 +144,9 @@ class main_GUI:
 
 
     def summaries_tab(self):
-        """set up summaries tab"""
+        """
+        This function sets up the summaries tab
+        """
 
         summary_frame = ctk.CTkFrame(self.tab_summary)
         summary_frame.pack(fill="x", expand=True)
@@ -148,12 +155,13 @@ class main_GUI:
         self.summary_box.configure(state="disabled")
         self.summary_box.pack(fill="x")
 
-        """Trev - load the summaries into the textbox self.summary_box
-        should also add a display_summaries function"""
+        self.display_summaries()
     
 
     def alerts_tab(self):
-        """set up alerts tab"""
+        """
+        This function sets up the alerts tab
+        """
 
         alerts_frame = ctk.CTkFrame(self.tab_alerts)
         alerts_frame.pack(fill="x", expand=True)
@@ -162,15 +170,13 @@ class main_GUI:
         self.alert_box.configure(state="disabled")
         self.alert_box.pack(fill="x")
 
-        """Trev - load the alerts into the textbox self.alert_box
-        use the budget rules, access them using self.state.budget_rules (full class is in data_model.py)
-        if a budgeting rule is violated, an alert will be created
-        I have created 2 alert types so far: Warning and Critical. you can add more if you want
-        should also add a display_alerts function"""
+        self.display_alerts()
 
 
     def test_tab(self):
-        """set up test data generator tab"""
+        """
+        This function sets up the test data generator tab
+        """
 
         test_frame = ctk.CTkFrame(self.tab_test)
         test_frame.pack(fill="x", expand=True)
@@ -178,17 +184,17 @@ class main_GUI:
 
         ctk.CTkLabel(test_frame, text='Test Data Generator:', font=("Arial", 14, "bold")).pack(pady=10)
 
-        #trev added - here
-        ctk.CTkButton(test_frame, text="Scenario 1: Realistic 30 Days",
-                      command = lambda: self.load_test_scenario("realistic")).pack(pady=10)
-        ctk.CTkButton(test_frame, text="Scenario 2: Overspend", 
-                      command = lambda: self.load_test_scenario("overspend")).pack(pady=10)
-        ctk.CTkButton(test_frame, text="Scenario 3: Empty", 
-                      command = lambda: self.load_test_scenario("empty")).pack(pady=10)
-        ctk.CTkButton(test_frame, text="Load Custom JSON Scenario", 
-                      command = self.load_custom_json_scenario).pack(pady=10)
+        ctk.CTkButton(test_frame, text="Scenario 1: Realistic 30 Days", command = lambda: self.load_test_scenario("realistic")).pack(pady=10)
+        ctk.CTkButton(test_frame, text="Scenario 2: Overspend", command = lambda: self.load_test_scenario("overspend")).pack(pady=10)
+        ctk.CTkButton(test_frame, text="Scenario 3: Empty", command = lambda: self.load_test_scenario("empty")).pack(pady=10)
+        ctk.CTkButton(test_frame, text="Load Custom JSON Scenario", command = self.load_custom_json_scenario).pack(pady=10)
 
+    
     def load_test_scenario(self, mode):
+        """
+        This function loads in realistic test transaction sets
+        """
+        
         if mode == "realistic":
             trans, rules, income = TestDataGenerator.generate_sample_data(days = 30)
         elif mode == "overspend":
@@ -214,9 +220,13 @@ class main_GUI:
             "empty" : "Successfully cleared all data."
         }
         self.show_success_dialog(messages.get(mode, "Test data loaded."))
-    #end
+    
 
     def load_custom_json_scenario(self):
+        """
+        This function loads in custom scenarios from json files
+        """
+        
         from tkinter import filedialog
         file = filedialog.askopenfilename(
             filetypes = [("JSON files", "*.json"), ("JSONL files", "*.jsonl")],
@@ -242,12 +252,14 @@ class main_GUI:
             else:
                 self.show_error(f"Failed to load: {message}")
         
-        """Trev - I have set up buttons that you can use for loading different test data scenarios, use the test_data_generator file to load transactions and budget ruels from json files"""
     
     def add_income(self):
-        """set up total income"""
+        """
+        This function adds total income with input validation
+        """
 
         flag = False
+        
         try:
             income_str = self.income_entry.get()
 
@@ -263,30 +275,31 @@ class main_GUI:
             except ValueError:
                 self.show_error("Invalid amount: Please enter a number")
                 flag = True
+                
         except Exception as e:
             self.show_error(f"Error: {e}")
             flag = True
 
+        #if no errors
         if not flag:
-            dialog = ctk.CTkToplevel(self.root)
-            dialog.title("Success")
-            dialog.geometry("400x150")
-            ctk.CTkLabel(dialog, text="You have successfully set your total net income", wraplength=350).pack(padx=20, pady=20)
-            ctk.CTkButton(dialog, text="OK", command=dialog.destroy).pack(pady=10)
+            show_success_dialogue("You have successfully set your total net income")
 
             total = TotalIncome(income, income)
             self.state.total_income = total
-            FileHandler.save_total(total)
+            FileHandler.save_total(total)        #saving total income to its respsective json file
 
-            self.income_entry.delete(0, "end")
-            self.display_budget_rules()
-            self.display_summaries()
+            self.income_entry.delete(0, "end")   #clearing input
+            self.display_budget_rules()          
+            self.display_summaries()             
             
 
     def add_transaction(self):
-        """add new transaction with data validation"""
+        """
+        This function adds a transaction with input validation
+        """
 
-        flag = False  #might change
+        flag = False  
+        
         try:
             date_str = self.date_entry.get()
             amount_str = self.amount_entry.get()
@@ -305,6 +318,8 @@ class main_GUI:
 
             try:
                 amt = float(amount_str)
+                if amt <= 0:
+                    self.show_error("Invalid amount: Please enter a positive number")
             except ValueError:
                 self.show_error("Invalid amount: Please enter a number")
                 flag = True
@@ -315,31 +330,38 @@ class main_GUI:
 
         if not flag:
             trans = Transaction(date, amt, Category(category_str), description)
-            self.state.transactions.append(trans)
+            self.state.transactions.append(trans)        #adding transaction to CurrentState
             self.display_transactions(self.filter.get())
+            
+            #updating summaries and alerts to include new transaction
             self.display_summaries()
             self.display_alerts()
-            self.clear_inputs()
-
-            self.display_budget_rules()
+            
             self.clear_inputs()
             
         
     def show_error(self, message: str):
-        """error window pop up"""
+        """
+        This function displays an error window
+        """
 
         dialog = ctk.CTkToplevel(self.root)
         dialog.title("Error")
         dialog.geometry("400x150")
 
         dialog.focus()
-
+        dialog.attributes("-topmost", True)
         ctk.CTkLabel(dialog, text=message, text_color="red", wraplength=350).pack(padx=20, pady=20)
         ctk.CTkButton(dialog, text="OK", command=dialog.destroy).pack(pady=10)
 
-        dialog.attributes("-topmost", True)
+        
 
+    
     def show_success_dialog(self, message:str):
+        """
+        This function displays a success window
+        """
+        
         dialog = ctk.CTkToplevel(self.root)
         dialog.title("Success")
         dialog.geometry("400x150")
@@ -349,8 +371,11 @@ class main_GUI:
         ctk.CTkLabel(dialog, text=message, wraplength=350).pack(padx=20, pady=20)
         ctk.CTkButton(dialog, text="OK", command=dialog.destroy).pack(pady=10)
 
+    
     def clear_inputs(self):
-        """clear transaction inputs"""
+        """
+        This function clears transaction inputs
+        """"
 
         self.date_entry.delete(0, "end")
         self.date_entry.insert(0, datetime.now().strftime("%Y-%m-%d"))
@@ -360,7 +385,9 @@ class main_GUI:
 
 
     def filter_trans(self, list, filtered_var):
-        """filter transactions"""
+        """
+        This function filters the transactions based on category
+        """
 
         filtered_list = []
 
@@ -372,11 +399,13 @@ class main_GUI:
     
 
     def display_transactions(self, filtered_var="All"):
-        """display transactions"""
+        """
+        This function gets all transactions from CurrentState and displays them
+        """
 
         self.transaction_box.configure(state="normal")
         self.transaction_box.delete("1.0","end")
-        trans = self.state.transactions
+        trans = self.state.transactions        #getting transactions from CurrentState
 
         if filtered_var != "All":
             trans = self.filter_trans(trans, filtered_var)
@@ -393,9 +422,11 @@ class main_GUI:
 
 
     def add_budget_rules(self):
-        """add budget rule with data validation"""
+        """
+        This function adds a budget rule with input validation
+        """
 
-        flag = False  #might change
+        flag = False 
         try:
             threshold_str = self.budget_threshold.get()
             category = self.budget_category.get()
@@ -406,22 +437,22 @@ class main_GUI:
                 self.show_error("Please fill in all the required fields")
                 flag = True
             
-
-
             try:
                 threshold = float(threshold_str)
                 if threshold <= 0:
-                    self.show_error("Invalid amount: Amount cannot be negative")
+                    self.show_error("Invalid amount: Please enter a positive number")
                     flag = True
 
                 try: 
-                    current = self.state.total_income.current
+                    #allocating total income amount to various categories for budget rules
+                    current = self.state.total_income.current         #remaining income after allocation
                     if threshold > current:
                         self.show_error("Invalid amount: you have exceeded your income")
                         flag = True
                     else:
                         subtract = 0
-                        
+
+                        #ensures that if there are duplicate categories, only the largest amount in each category is subtracted from the remianing income
                         repeat_cat = [rule for rule  in self.state.budget_rules if rule .category == Category(category)]        #checking if a budget rule with the same category has been set before
                         if repeat_cat:
                             for match in repeat_cat:
@@ -449,26 +480,23 @@ class main_GUI:
             self.state.budget_rules.append(budget)
             self.display_budget_rules()
             
-            #trev added
+            #updating summaries and alerts to include new budget rule
             self.display_summaries()
             self.display_alerts()
-            #end
-            
+
             self.budget_threshold.delete(0, "end") #or seperate clear input function
 
-    #not displaying default
+
     def display_budget_rules(self):
-        """display budget rules"""
+        """
+        This function gets all budget rules from CurrentState, displays them and displays how much of the total income has not yet been allocated to the budget rules
+        """
 
         self.budget_box.configure(state="normal")
         self.budget_box.delete("1.0","end")
         
         if self.state.total_income:
-            total_budgeted = sum(rule.threshold for rule in self.state.budget_rules)
-            total_spent = sum(t.amount for t in self.state.transactions)
-            remainder = self.state.total_income.total - total_spent
-            self.state.total_income.current = remainder
-            self.budget_box.insert("end", f"Current Balance: ${remainder:.2f}\n")
+            self.budget_box.insert("end", f"Income yet to be allocated: {self.state.total_income.current}\n")
 
         if self.state.budget_rules:
             for b in self.state.budget_rules:
@@ -479,8 +507,12 @@ class main_GUI:
         
         self.budget_box.configure(state="disabled")
 
-    #trev added- starting here
+    
     def display_summaries(self):
+        """
+        This function gets all summaries and displays them
+        """
+        
         self.summary_box.configure(state = "normal")
         self.summary_box.delete("1.0", "end")
 
@@ -490,7 +522,12 @@ class main_GUI:
             self.summary_box.insert("end", line + "\n")
         self.summary_box.configure(state = "disabled")
 
+    
     def display_alerts(self):
+        """
+        This function checks for alerts and displays them
+        """
+        
         self.alert_box.configure(state = "normal")
         self.alert_box.delete("1.0", "end")
 
@@ -506,23 +543,34 @@ class main_GUI:
             self.alert_box.insert("end", prefix + alert + "\n")
         
         self.alert_box.configure(state = "disabled")
-    #end
+    #
 
     def save_all(self):
-        """save all transaction and budget rule data into json files"""
+        """
+        This function saves all transaction and budget rule data into json files
+        """
 
-        FileHandler.save_state(CurrentState(self.state.transactions, self.state.budget_rules))
+        FileHandler.save_state(self.state)
 
     def clear_all(self):
-        """clear all data and empty json files"""
+        """
+        This function clears all data from CurrentState and empties json files
+        """
 
-        FileHandler.delete_all(CurrentState(self.state.transactions, self.state.budget_rules))
+        FileHandler.delete_all(self.state)
 
         self.display_transactions()
         self.display_budget_rules()
+        self.display_summaries()
+        self.display_alerts()
 
 
 def main():
+    """
+    This is the main entry point of program
+    It sets the default colour scheme and initalises and calls the GUI
+    """
+    
     ctk.set_appearance_mode("light")
     ctk.set_default_color_theme("blue")
 
