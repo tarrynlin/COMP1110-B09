@@ -18,6 +18,9 @@ class AlertType(Enum):
 
 @dataclass
 class TotalIncome:
+    """
+    Represents user's total income and the remaining income after total income has been allocated to budget rules
+    """
     total : float
     current : float
 
@@ -26,17 +29,13 @@ class TotalIncome:
             "total": self.total,
             "current": self.current
         }
-    """
-    def fromDict(data: dict) -> 'TotalIncome':
-        return TotalIncome(
-            total=float(data["total"]),
-            current=float(data["current"])
-        )"""
-    
 
- 
+
 @dataclass
 class Transaction:
+    """
+    Represents a transaction 
+    """
     date : datetime
     amount : float
     category : Category
@@ -65,6 +64,9 @@ class Transaction:
         )
 @dataclass    
 class BudgetRules:
+    """
+    Represents a budget rule
+    """
     threshold: float
     category: Category
     period: str #or make another class?
