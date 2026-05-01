@@ -282,11 +282,10 @@ class main_GUI:
 
         #if no errors
         if not flag:
-            show_success_dialogue("You have successfully set your total net income")
+            self.show_success_dialog("You have successfully set your total net income")
 
             total = TotalIncome(income, income)
             self.state.total_income = total
-            FileHandler.save_total(total)        #saving total income to its respsective json file
 
             self.income_entry.delete(0, "end")   #clearing input
             self.display_budget_rules()          
@@ -320,6 +319,7 @@ class main_GUI:
                 amt = float(amount_str)
                 if amt <= 0:
                     self.show_error("Invalid amount: Please enter a positive number")
+                    flag = True
             except ValueError:
                 self.show_error("Invalid amount: Please enter a number")
                 flag = True
@@ -373,7 +373,7 @@ class main_GUI:
     def clear_inputs(self):
         """
         This function clears transaction inputs
-        """"
+        """
 
         self.date_entry.delete(0, "end")
         self.date_entry.insert(0, datetime.now().strftime("%Y-%m-%d"))
@@ -445,7 +445,7 @@ class main_GUI:
                     #allocating total income amount to various categories for budget rules
                     current = self.state.total_income.current         #remaining income after allocation
                     if threshold > current:
-                        self.show_error("Invalid amount: you have exceeded your income")
+                        self.show_error("Invalid amount: you do not have enough income to allocate to this rule")
                         flag = True
                     else:
                         subtract = 0
