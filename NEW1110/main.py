@@ -6,6 +6,7 @@ from file_handling import FileHandler
 from summaries import SummaryEngine
 from alerts import AlertEngine
 from test_data_generator import TestDataGenerator
+from tkinter import filedialog
 
 
 class main_GUI:
@@ -184,24 +185,62 @@ class main_GUI:
                       command = lambda: self.load_test_scenario("overspend")).pack(pady=10)
         ctk.CTkButton(test_frame, text="Scenario 3: Empty", 
                       command = lambda: self.load_test_scenario("empty")).pack(pady=10)
+        ctk.CTkButton(test_frame, text="Load Custom JSON Scenario", 
+                      command = self.load_custom_json_scenario).pack(pady=10)
 
     def load_test_scenario(self, mode):
         if mode == "realistic":
-            trans, rules = TestDataGenerator.generate_sample_data(days = 30)
+            trans, rules, income = TestDataGenerator.generate_sample_data(days = 30)
         elif mode == "overspend":
-            trans, rules = TestDataGenerator.generate_overspend_scenario()
+            trans, rules, income = TestDataGenerator.generate_overspend_scenario()
         else:
-            trans, rules = TestDataGenerator.generate_empty_scenario()
+            trans, rules , income = TestDataGenerator.generate_empty_scenario()
         
         self.state.transactions = trans
         self.state.budget_rules = rules
+
+        total_spent = sum(t.amount for t in trans)
+        remaining = income - total_spent
+        self.state.total_income = TotalIncome(total=float(income), current = float(remaining))
 
         self.display_transactions()
         self.display_budget_rules()
         self.display_summaries()
         self.display_alerts()
+
+        messages = {
+            "realistic" : "Successfully generated 30 days of realistic data!",
+            "overspend" : "Successfully generated overspending scenario!",
+            "empty" : "Successfully cleared all data."
+        }
+        self.show_success_dialog(messages.get(mode, "Test data loaded."))
     #end
 
+    def load_custom_json_scenario(self):
+        from tkinter import filedialog
+        file = filedialog.askopenfilename(
+            filetypes = [("JSON files", "*.json"), ("JSONL files", "*.jsonl")],
+            title = "Select Scenario File"
+        )
+
+        if file:
+            result, message = TestDataGenerator.load_json(file)
+            if result:
+                trans, rules, income = result
+                self.state.transactions = trans
+                self.state.budget_rules = rules
+
+                from data_model import TotalIncome
+                self.state.total_income = TotalIncome(float(income), current=float(income))
+                self.display_transactions()
+                self.display_budget_rules()
+                self.display_summaries()
+                self.display_alerts()
+
+                self.show_success_dialog("You have successfully loaded the custom JSON scenario")
+            
+            else:
+                self.show_error(f"Failed to load: {message}")
         
         """Trev - I have set up buttons that you can use for loading different test data scenarios, use the test_data_generator file to load transactions and budget ruels from json files"""
     
@@ -237,10 +276,11 @@ class main_GUI:
 
             total = TotalIncome(income, income)
             self.state.total_income = total
-            saved = FileHandler.save_total(total)
+            FileHandler.save_total(total)
 
             self.income_entry.delete(0, "end")
             self.display_budget_rules()
+            self.display_summaries()
             
 
     def add_transaction(self):
@@ -265,26 +305,23 @@ class main_GUI:
 
             try:
                 amt = float(amount_str)
-                if amt <= 0:
-                    self.show_error("Invalid amount: Amount cannot be negative")
             except ValueError:
                 self.show_error("Invalid amount: Please enter a number")
                 flag = True
 
         except Exception as e:
-            error_msg += f"Error: {error_msg}"
+            self.show_error(f"Error: {e}")
             flag = True
 
         if not flag:
             trans = Transaction(date, amt, Category(category_str), description)
             self.state.transactions.append(trans)
             self.display_transactions(self.filter.get())
-
-            #trev added
             self.display_summaries()
             self.display_alerts()
-            #end
-            
+            self.clear_inputs()
+
+            self.display_budget_rules()
             self.clear_inputs()
             
         
@@ -302,6 +339,15 @@ class main_GUI:
 
         dialog.attributes("-topmost", True)
 
+    def show_success_dialog(self, message:str):
+        dialog = ctk.CTkToplevel(self.root)
+        dialog.title("Success")
+        dialog.geometry("400x150")
+
+        dialog.focus()
+        dialog.attributes("-topmost", True)
+        ctk.CTkLabel(dialog, text=message, wraplength=350).pack(padx=20, pady=20)
+        ctk.CTkButton(dialog, text="OK", command=dialog.destroy).pack(pady=10)
 
     def clear_inputs(self):
         """clear transaction inputs"""
@@ -416,12 +462,16 @@ class main_GUI:
 
         self.budget_box.configure(state="normal")
         self.budget_box.delete("1.0","end")
-        budget_rules = self.state.budget_rules
+        
         if self.state.total_income:
-            self.budget_box.insert("end", f"Income yet to be allocated: {self.state.total_income.current}\n")
+            total_budgeted = sum(rule.threshold for rule in self.state.budget_rules)
+            total_spent = sum(t.amount for t in self.state.transactions)
+            remainder = self.state.total_income.total - total_spent
+            self.state.total_income.current = remainder
+            self.budget_box.insert("end", f"Current Balance: ${remainder:.2f}\n")
 
-        if budget_rules:
-            for b in budget_rules:
+        if self.state.budget_rules:
+            for b in self.state.budget_rules:
                 display = f"{b.category.value} - {b.period.upper()}: ${b.threshold: .2f} ({b.alert.value})\n"
                 self.budget_box.insert("end", display)
         else:
@@ -433,7 +483,8 @@ class main_GUI:
     def display_summaries(self):
         self.summary_box.configure(state = "normal")
         self.summary_box.delete("1.0", "end")
-        report_lines = SummaryEngine.get_monthly_report(self.state.transactions)
+
+        report_lines = SummaryEngine.get_monthly_report(self.state.transactions, total_income_obj=self.state.total_income, mode="monthly")
 
         for line in report_lines:
             self.summary_box.insert("end", line + "\n")
