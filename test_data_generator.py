@@ -201,7 +201,6 @@ class TestDataGenerator:
                             else:
                                 subtract = r["threshold"]
                             
-                            print(current)
                             current -= subtract
                             rules.append(BudgetRules.fromDict(r))
                     except Exception as e:
