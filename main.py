@@ -83,8 +83,8 @@ class main_GUI:
         input_frame.pack(fill="x")
 
         ctk.CTkLabel(input_frame, text="Date (YYYY-MM-DD):").place(relx=0.03, rely=0.2)
-        self.date_entry = ctk.CTkEntry(input_frame, width=150)
-        self.date_entry.insert(0, datetime.now().strftime("%Y-%m-%d"))
+        self.date_entry = ctk.CTkEntry(input_frame, width=200)
+        self.date_entry.insert(0, datetime.now().strftime("%Y-%m-%d %H:%M"))
         self.date_entry.place(relx=0.16, rely=0.2)
 
         ctk.CTkLabel(input_frame, text="Amount:").place(relx=0.03, rely=0.35)
@@ -313,13 +313,17 @@ class main_GUI:
             amount_str = self.amount_entry.get()
             category_str = self.category.get()
             description = self.description_entry.get()
-        
+
+            if not self.state.total_income:
+                self.show_error("Please set total net income first")
+                flag = True
+
             if not date_str or not amount_str or not description:
                 self.show_error("Please fill in all required fields")
                 flag = True
             
             try:
-                date = datetime.strptime(date_str, "%Y-%m-%d")
+                date = datetime.strptime(date_str, "%Y-%m-%d %H:%M")
             except ValueError:
                 self.show_error("Invalid date format: Please use YYYY-MM-DD")
                 flag = True
@@ -385,7 +389,7 @@ class main_GUI:
         """
 
         self.date_entry.delete(0, "end")
-        self.date_entry.insert(0, datetime.now().strftime("%Y-%m-%d"))
+        self.date_entry.insert(0, datetime.now().strftime("%Y-%m-%d %H:%M"))
         self.amount_entry.delete(0, "end")
         self.description_entry.delete(0, "end")
         self.category.set(Category.OTHER.value)
