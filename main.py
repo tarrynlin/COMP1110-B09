@@ -33,7 +33,7 @@ class main_GUI:
         This function sets up UIs
         """
 
-        self.tabview = ctk.CTkTabview(self.root, command = self.on_tab_change)
+        self.tabview = ctk.CTkTabview(self.root)
         self.tabview.pack(fill="both", expand=True, padx=10, pady=10)
 
         #tabs
@@ -58,13 +58,6 @@ class main_GUI:
         ctk.CTkButton(bottom_frame, text="Exit", command=self.root.quit).pack(side="right", padx=5)
         ctk.CTkButton(bottom_frame, text="Delete All Data", command=self.clear_all).pack(side="right", padx=5)
 
-    def on_tab_change(self):
-        ##refresh content when the user switches tabs
-        current_tab = self.tabview.get()
-        if current_tab == "Alerts":
-            self.display_alerts()
-        elif current_tab == "Summary":
-            self.display_summaries()
     
     def income_tab(self):
         """
@@ -451,97 +444,81 @@ class main_GUI:
             period = self.budget_period.get()
             alert = self.budget_alert.get()
 
-            if not threshold_str:
-                self.show_error("Please enter a threshold amount")
-                return
-            threshold = float(threshold_str)
-            if threshold <= 0:
-                self.show_error("Please enter a positive number")
-                return
-            if not self.state.total_income:
-                self.show_error("Please set total net income first")
-                return
-            if threshold > self.state.total_income.total:
-                self.show_error(f"Warning: Rule (${threshold}) exceeds total income (${self.state.total_income.total})")
-        
-        except ValueError:
-                self.show_error("Invalid amount: Please enter a valid number")
-                return
-        
-        budget = BudgetRules(threshold, Category(category), period, AlertType(alert))
-        self.state.budget_rules.append(budget)
+            if not threshold_str or not category or not period or not alert:
+                self.show_error("Please fill in all the required fields")
+                flag = True
             
-        self.recalculate_allocated_income()
+            try:
+                threshold = float(threshold_str)
+                if threshold <= 0:
+                    self.show_error("Invalid amount: Please enter a positive number")
+                    flag = True
 
-        self.display_budget_rules()
+                try: 
+                    #allocating total income amount to various categories for budget rules
+                    current = self.state.total_income.current         #remaining income after allocation
+                    if threshold > current:
+                        self.show_error("Invalid amount: you do not have enough income to allocate to this rule")
+                        flag = True
+                    else:
+                        subtract = 0
+
+                        #ensures that if there are duplicate categories, only the largest amount in each category is subtracted from the remianing income
+                        repeat_cat = [rule for rule  in self.state.budget_rules if rule .category == Category(category)]        #checking if a budget rule with the same category has been set before
+                        if repeat_cat:
+                            for match in repeat_cat:
+                                if threshold <= match.threshold: continue
+                                else:
+                                    subtract += threshold - match.threshold
+                        else:
+                            subtract = threshold
+
+                        self.state.total_income.current -= subtract     
+                except Exception as e:
+                    print(e)
+                    self.show_error("Please set total net income first")
+                    flag = True
+            except ValueError:
+                self.show_error("Invalid amount: Please enter a number")
+                flag = True
+        except Exception as e:
+            self.show_error(f"Error: {e}")
+            flag = True
+        
+        if not flag:
+
+            budget = BudgetRules(threshold, Category(category), period, AlertType(alert))
+            self.state.budget_rules.append(budget)
+            self.display_budget_rules()
             
-        #updating summaries and alerts to include new budget rule
-        self.display_summaries()
-        self.display_alerts()
+            #updating summaries and alerts to include new budget rule
+            self.display_summaries()
+            self.display_alerts()
 
-        self.budget_threshold.delete(0, "end") #or seperate clear input function
+            self.budget_threshold.delete(0, "end") #or seperate clear input function
 
-    def recalculate_allocated_income(self):
-        if not self.state.total_income: return
 
-        #only subtract the highest threshold per category to avoid double-counting
-        cat_max = {}
-        for rule in self.state.budget_rules:
-            if rule.category not in cat_max or rule.threshold > cat_max[rule.category]:
-                cat_max[rule.category] = rule.threshold
-        self.state.total_income.current = self.state.total_income.total - sum(cat_max.values())
-
-    
     def display_budget_rules(self):
         """
         This function gets all budget rules from CurrentState, displays them and displays how much of the total income has not yet been allocated to the budget rules
         """
 
         self.budget_box.configure(state="normal")
-        self.budget_box.delete("1.0", "end")
-
-        output = []
-        income = self.state.total_income
-        total_val = income.total if income else 0
-
-        if income:
-            output.append(f"Total income: {total_val:.2f}")
-
-        if not self.state.budget_rules:
-            # Default scenario
-            if income:
-                output.append("Income yet to be allocated: 0.00")
-            
-            output.append("-" * 40)
-            output.append("No budget rules configured")
-            output.append("Using system default rules (Monthly):")
-
-            defaults = {
-                "Meals": 0.35, "Transport": 0.15, "Shopping": 0.20, 
-                "Utilities": 0.10, "Entertainment": 0.10, "Other": 0.10
-            }
-
-            for cat, pct in defaults.items():
-                line = f"{cat}: {pct:.0%}"
-                if income:
-                    line += f" (${total_val * pct:.2f})"
-                output.append(line)
-                
-        else:
-            current_val = income.current if income else 0
-            output.append(f"Income yet to be allocated: {current_val:.2f}")
-            output.append("-" * 40)
-            output.append("Configured Budget Rules:")
-            
-            for b in self.state.budget_rules:
-                output.append(
-                    f"{b.category.value} - {b.period.upper()}: "
-                    f"${b.threshold:.2f} ({b.alert.value})"
-                )
-
-        self.budget_box.insert("end", "\n".join(output) + "\n")
-        self.budget_box.configure(state="disabled")
+        self.budget_box.delete("1.0","end")
         
+        if self.state.total_income:
+            self.budget_box.insert("end", f"Total income: {self.state.total_income.total: .2f}\n")
+            self.budget_box.insert("end", f"Income yet to be allocated: {self.state.total_income.current: .2f}\n")
+
+        if self.state.budget_rules:
+            for b in self.state.budget_rules:
+                display = f"{b.category.value} - {b.period.upper()}: ${b.threshold: .2f} ({b.alert.value})\n"
+                self.budget_box.insert("end", display)
+        else:
+            self.budget_box.insert("end", "No budget rules configured")
+        
+        self.budget_box.configure(state="disabled")
+
     
     def display_summaries(self):
         """
@@ -574,13 +551,9 @@ class main_GUI:
         active_alerts = AlertEngine.check_alerts(self.state.transactions, self.state.budget_rules, income_value)
         
         for alert in active_alerts:
-            if "Critical" in alert:
-                prefix = "❌"
-            elif "Warning" in alert:
-                prefix = "⚠️"
-            elif "Safe" in alert:
-                prefix = "✅"
-            self.alert_box.insert("end", prefix + alert + "\n\n")
+            prefix = "⚠️" if "Warning" in alert or "Notice" in alert else "❌"
+            if alert == "Safe within budget.": prefix = "✅"
+            self.alert_box.insert("end", prefix + alert + "\n")
         
         self.alert_box.configure(state = "disabled")
 
