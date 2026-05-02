@@ -61,7 +61,7 @@ class AlertEngine:
                     if usage >= 1.0:
                         msg = f"{rule.alert.value}! [{period}] {category.value} spending has reached ${total:.2f}, ${(total - rule.threshold):.2f} over limit!"
                     elif usage >= 0.85:
-                        msg = f"{rule.alert.value}! [{period}] {category.value} at {usage*100:.1f}% of limit!"
+                        msg = f"{rule.alert.value}! [{period}] {category.value} spending is at {usage*100:.1f}% of limit!"
                     
                     #Replace existing alert if more severe
                     if msg and current_score > severity_score:
