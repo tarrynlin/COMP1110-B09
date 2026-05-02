@@ -1,4 +1,4 @@
-{
+  {
   "total_income": {"total": 1370, "current": 1370},  
   "transactions": [
     {
@@ -390,6 +390,24 @@
         "amount": 35.0,
         "category": "Transport",
         "description": "Back home"
+    },
+    {
+        "date": "2026-04-28T15:20:00",
+        "amount": 125.0,
+        "category": "Shopping",
+        "description": "new dress"
+    },
+    {
+        "date": "2026-04-28T20:00:00",
+        "amount": 220.0,
+        "category": "Meals",
+        "description": "Big dinner"
+    },
+    {
+        "date": "2026-04-29T20:00:00",
+        "amount": 200.0,
+        "category": "Shopping",
+        "description": "Shopping spree"
     },
     {
         "date": "2026-04-29T07:28:47",
