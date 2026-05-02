@@ -39,7 +39,7 @@ file_handling.py: Manages saving/loading to JSON files.
 test_data_generator.py: Tool for generating sample data for testing purposes.
 
 ## Troubleshooting
-ModuleNotFoundError: If you see an error regarding customtkinter, ensure you ran pip install customtkinter in the correct Python environment.
+ModuleNotFoundError: If you see an error regarding customtkinter, ensure you ran ```pip install customtkinter``` in the correct Python environment. If using an IDE, ensure you ran it in the built-in terminal or command prompt.
 
 
 
