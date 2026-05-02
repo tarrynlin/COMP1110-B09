@@ -491,46 +491,57 @@ class main_GUI:
                 cat_max[rule.category] = rule.threshold
         self.state.total_income.current = self.state.total_income.total - sum(cat_max.values())
 
+    
     def display_budget_rules(self):
         """
         This function gets all budget rules from CurrentState, displays them and displays how much of the total income has not yet been allocated to the budget rules
         """
 
         self.budget_box.configure(state="normal")
-        self.budget_box.delete("1.0","end")
-        
-        if self.state.total_income:
-            self.budget_box.insert("end", f"Total income: {self.state.total_income.total: .2f}\n")
+        self.budget_box.delete("1.0", "end")
 
-        
+        output = []
+        income = self.state.total_income
+        total_val = income.total if income else 0
+
+        if income:
+            output.append(f"Total income: {total_val:.2f}")
+
         if not self.state.budget_rules:
-            self.budget_box.insert("end", f"Income yet to be allocated: 0\n")
-            self.budget_box.insert("end", "-"*40 + "\n")
-            self.budget_box.insert("end", "No budget rules configured \n")
-            self.budget_box.insert("end", "Using sytem default rules (Monthly): \n")
+            # Default scenario
+            if income:
+                output.append("Income yet to be allocated: 0.00")
+            
+            output.append("-" * 40)
+            output.append("No budget rules configured")
+            output.append("Using system default rules (Monthly):")
 
             defaults = {
-                "Meals": "35%", "Transport": "15%", "Shopping": "20%", "Utilities": "10%", "Entertainment": "10%", "Other": "10%"
+                "Meals": 0.35, "Transport": 0.15, "Shopping": 0.20, 
+                "Utilities": 0.10, "Entertainment": 0.10, "Other": 0.10
             }
-            
+
             for cat, pct in defaults.items():
-                if self.state.total_income:
-                    limit = self.state.total_income.total * (int(pct.strip('%'))/100)
-                    self.budget_box.insert("end", f"{cat}: {pct} (${limit:.2f})\n")
-                    self.state.total_income = TotalIncome(self.state.total_income.total, 0)
-                else:
-                    self.budget_box.insert("end", f"{cat}: {pct} \n")
-
+                line = f"{cat}: {pct:.0%}"
+                if income:
+                    line += f" (${total_val * pct:.2f})"
+                output.append(line)
+                
         else:
-            self.budget_box.insert("end", f"Income yet to be allocated: {self.state.total_income.current: .2f}\n")
-            self.budget_box.insert("end", "-"*40 + "\n")
-            self.budget_box.insert("end", "Configured Budget Rules: \n")
+            current_val = income.current if income else 0
+            output.append(f"Income yet to be allocated: {current_val:.2f}")
+            output.append("-" * 40)
+            output.append("Configured Budget Rules:")
+            
             for b in self.state.budget_rules:
-                display = f"{b.category.value} - {b.period.upper()}: ${b.threshold: .2f} ({b.alert.value})\n"
-                self.budget_box.insert("end", display)
-        
-        self.budget_box.configure(state="disabled")
+                output.append(
+                    f"{b.category.value} - {b.period.upper()}: "
+                    f"${b.threshold:.2f} ({b.alert.value})"
+                )
 
+        self.budget_box.insert("end", "\n".join(output) + "\n")
+        self.budget_box.configure(state="disabled")
+        
     
     def display_summaries(self):
         """
