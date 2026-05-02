@@ -8,9 +8,9 @@ To run this application, you need Python 3.7+
 
 1. In your terminal (Command Prompt, Terminal, Git Bash) clone the repository
    
-   ```git clone https://github.com/tarrynlin/Budget1110-B09```
+   ```git clone https://github.com/tarrynlin/COMP1110-B09```
    
-   ```cd Budget1110-B09```
+   ```cd COMP1110-B09```
 
    Alternatively, you can select **Download ZIP** in GitHub or download from moodle.
 3. In your terminal install dependencies
