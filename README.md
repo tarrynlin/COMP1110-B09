@@ -36,7 +36,7 @@ Alternatively, you can run it in your IDE
 ## Project Structure
 ```main.py```: The entry point and GUI controller.
 
-```data_model.py```: Core data structures (Transactions, Rules, Categories).
+```data_model.py```: Core data structures (Total Income, Transactions, Rules, Categories, AlertTypes, CurrentState).
 
 ```summaries.py```: Logic for calculating spending reports and averages.
 
@@ -44,7 +44,7 @@ Alternatively, you can run it in your IDE
 
 ```file_handling.py```: Manages saving/loading to JSON files.
 
-```test_data_generator.py```: Tool for generating sample data for testing purposes.
+```test_data_generator.py```: Tool for generating sample data for testing purposes and for loading in test scenarios.
 
 ## Troubleshooting
 ModuleNotFoundError: If you see an error regarding customtkinter, ensure you ran ```pip install customtkinter``` in the correct Python environment. 
