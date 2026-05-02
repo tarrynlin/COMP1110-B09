@@ -32,7 +32,7 @@
     { "date": "2026-03-27T12:48:23", "amount": 140.00, "category": "Meals", "description": "Frd's birthday" },
     { "date": "2026-03-27T13:44:41", "amount": 56.50, "category": "Meals", "description": "Canteen" },
     { "date": "2026-03-31T12:05:55", "amount": 45.00, "category": "Meals", "description": "Saizeriya" },
-    { "date": "2026-03-31T18:48:15", "amount": 198.00, "category": "Uncategorised", "description": "Random stuf" }
+    { "date": "2026-03-31T18:48:15", "amount": 298.00, "category": "Uncategorised", "description": "Random stuf" }
   ],
   "budget_rules": [
     {
