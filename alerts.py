@@ -71,7 +71,7 @@ class AlertEngine:
                     alerts.append(highest_alert)
         
              
-        elif income_value > 0:
+        if income_value > 0:
             default = {
                 Category.TRANSPORT: (0.15, "Transport"),
                 Category.MEALS: (0.35, "Meals"),
@@ -85,9 +85,9 @@ class AlertEngine:
                 limit = income_value * percentage
                 usage = cat_totals[cat] / limit if limit > 0 else 0
                 if usage >= 1.0:
-                    alerts.append(f"Critical: {cat.value} spending (${cat_totals[cat]:.2f}) is over your budget limit!")
+                    alerts.append(f"Critical: {cat.value} spending (${cat_totals[cat]:.2f}) has exceeded {percentage*100}% of your total income!")
                 elif usage >= 0.90:
-                    alerts.append(f"Warning: {cat.value} spending has reached over {int(usage*100)}% of your budget")
+                    alerts.append(f"Warning: {cat.value} spending has reached almost {percentage*100}% of your total income")
 
         amounts = list(daily_totals.values())
         if len(amounts) >= 2:
