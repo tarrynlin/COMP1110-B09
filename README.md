@@ -7,8 +7,9 @@ To run this application, you need Python 3.7+
 
 1. Clone the repository
    git clone https://github.com/your-username/budgeting-tool.git
-   cd budgeting-tool
-2. Install Dependencies
+   
+   '''cd budgeting-tool'''
+3. Install Dependencies
    The application uses customtkinter
    pip install customtkinter
 
