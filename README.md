@@ -8,14 +8,16 @@ To run this application, you need Python 3.7+
 1. Clone the repository
    git clone https://github.com/your-username/budgeting-tool.git
    
-   '''cd budgeting-tool'''
+   ```cd budgeting-tool```
 3. Install Dependencies
    The application uses customtkinter
-   pip install customtkinter
+   
+   ```pip install customtkinter```
 
 ## Execution Instructions
 Once the dependencies are installed, you can launch the application by running the main.py script:
-python main.py
+
+```python main.py```
 
 ### How to Use
 1. Set Income: Start by navigating to the "Set Income" tab to define your monthly budget.
