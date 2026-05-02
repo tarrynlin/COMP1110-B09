@@ -466,13 +466,13 @@
         "alert": "Critical"
     },
     {
-        "threshold": "60.0",
+        "threshold": 60.0,
         "category": "Shopping",
         "period": "Monthly",
         "alert": "Warning"
     },
     {
-        "threshold": "100.0",
+        "threshold": 100.0,
         "category": "Shopping",
         "period": "Monthly",
         "alert": "Critical"
