@@ -63,7 +63,7 @@ class AlertEngine:
                         # Check if this rule's threshold is exceeded
                         if usage >= 1.0:
                             alert_type = rule.alert.value
-                            alert_msg = f"{alert_type}! [{period}] {category.value} spending has reached ${total:.2f}, {(total - rule.threshold):.2f} over limit!"
+                            alert_msg = f"{alert_type}! [{period}] {category.value} spending has reached ${total:.2f}, ${(total - rule.threshold):.2f} over limit!"
                             
                             
                             # Track the most severe alert (Critical > Warning)
