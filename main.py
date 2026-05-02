@@ -501,28 +501,33 @@ class main_GUI:
         
         if self.state.total_income:
             self.budget_box.insert("end", f"Total income: {self.state.total_income.total: .2f}\n")
-            self.budget_box.insert("end", f"Income yet to be allocated: {self.state.total_income.current: .2f}\n")
-            self.budget_box.insert("end", "-"*40 + "\n")
 
-        if self.state.budget_rules:
-            self.budget_box.insert("end", "Configured Budget Rules: \n")
-            for b in self.state.budget_rules:
-                display = f"{b.category.value} - {b.period.upper()}: ${b.threshold: .2f} ({b.alert.value})\n"
-                self.budget_box.insert("end", display)
-        else:
+        
+        if not self.state.budget_rules:
+            self.budget_box.insert("end", f"Income yet to be allocated: 0\n")
+            self.budget_box.insert("end", "-"*40 + "\n")
             self.budget_box.insert("end", "No budget rules configured \n")
             self.budget_box.insert("end", "Using sytem default rules (Monthly): \n")
 
             defaults = {
                 "Meals": "35%", "Transport": "15%", "Shopping": "20%", "Utilities": "10%", "Entertainment": "10%", "Other": "10%"
             }
-
+            
             for cat, pct in defaults.items():
                 if self.state.total_income:
                     limit = self.state.total_income.total * (int(pct.strip('%'))/100)
                     self.budget_box.insert("end", f"{cat}: {pct} (${limit:.2f})\n")
+                    self.state.total_income = TotalIncome(self.state.total_income.total, 0)
                 else:
                     self.budget_box.insert("end", f"{cat}: {pct} \n")
+
+        else:
+            self.budget_box.insert("end", f"Income yet to be allocated: {self.state.total_income.current: .2f}\n")
+            self.budget_box.insert("end", "-"*40 + "\n")
+            self.budget_box.insert("end", "Configured Budget Rules: \n")
+            for b in self.state.budget_rules:
+                display = f"{b.category.value} - {b.period.upper()}: ${b.threshold: .2f} ({b.alert.value})\n"
+                self.budget_box.insert("end", display)
         
         self.budget_box.configure(state="disabled")
 
