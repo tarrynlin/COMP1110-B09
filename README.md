@@ -34,17 +34,17 @@ Alternatively, you can run it in your IDE
 5. Loading Test Scenarios: Navigate to the **Test Data** tab and select **Load Custom JSON Scenario**. Select one of the pre-made JSON scenario files within this repository.
 
 ## Project Structure
-main.py: The entry point and GUI controller.
+```main.py```: The entry point and GUI controller.
 
-data_model.py: Core data structures (Transactions, Rules, Categories).
+```data_model.py```: Core data structures (Transactions, Rules, Categories).
 
-summaries.py: Logic for calculating spending reports and averages.
+```summaries.py```: Logic for calculating spending reports and averages.
 
-alerts.py: Detection engine for budget breaches and spending anomalies.
+```alerts.py```: Detection engine for budget breaches and spending anomalies.
 
-file_handling.py: Manages saving/loading to JSON files.
+```file_handling.py```: Manages saving/loading to JSON files.
 
-test_data_generator.py: Tool for generating sample data for testing purposes.
+```test_data_generator.py```: Tool for generating sample data for testing purposes.
 
 ## Troubleshooting
 ModuleNotFoundError: If you see an error regarding customtkinter, ensure you ran ```pip install customtkinter``` in the correct Python environment. 
