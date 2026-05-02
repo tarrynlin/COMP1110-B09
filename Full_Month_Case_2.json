@@ -7,7 +7,7 @@
     { "date": "2026-03-01T15:23:08", "amount": 11.50, "category": "Meals", "description": "Tea" },
     { "date": "2026-03-03T12:45:22", "amount": 56.50, "category": "Meals", "description": "McDonald" },
     { "date": "2026-03-03T10:00:00", "amount": 350.00, "category": "Utilities", "description": "Electricity" },
-    { "date": "2026-03-04T17:33:34", "amount": 5.10, "category": "Transport", "description": "Bus" },
+    { "date": "2026-03-04T17:33:34", "amount": 35.10, "category": "Transport", "description": "Bus" },
     { "date": "2026-03-05T11:54:06", "amount": 56.20, "category": "Meals", "description": "Café de Coral" },
     { "date": "2026-03-06T19:30:02", "amount": 23.00, "category": "Entertainment", "description": "Game" },
     { "date": "2026-03-06T23:52:54", "amount": 3.42, "category": "Shopping", "description": "TaoBao" },
