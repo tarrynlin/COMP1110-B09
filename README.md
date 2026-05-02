@@ -52,7 +52,7 @@ Alternatively, you can run it in your IDE
 
 ```Full_Month_Case_2.json```: The purpose of this test case is to test summaries and alerts against a full month of transactions and its budget rules. This test case does not have any malformed data, so as to simulate a successful program run. 
 
-```Full_Month_Budget_3.json```: The purpose of this test case is to test summaries and alerts against a full month of transactions and its budget rules. This test case does not have any malformed data, so as to simulate a successful program run. This test cases specifically targets the spending spike alert.
+```Full_Month_Budget_3.json```: The purpose of this test case is to test summaries and alerts against a full month of transactions and its budget rules. This test case does not have any malformed data, so as to simulate a successful program run. This test case specifically targets the spending spike alert.
 
 ```Edge_Cases```: The purpose of this test case is to test summaries and alerts against a combination of working and malformed transactions and budget rules. This test case targets all errors and error handling to ensure the program can still run smoothly. 
 
