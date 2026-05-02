@@ -468,13 +468,13 @@
     {
         "threshold": "60.0",
         "category": "Shopping",
-        "period": "Weekly",
+        "period": "Monthly",
         "alert": "Warning"
     },
     {
         "threshold": "100.0",
         "category": "Shopping",
-        "period": "Weekly",
+        "period": "Monthly",
         "alert": "Critical"
     },
     {
