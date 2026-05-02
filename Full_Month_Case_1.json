@@ -5,7 +5,13 @@
         "date": "2026-04-01T08:43:13",
         "amount": 21.0,
         "category": "Meals",
-        "description": "Saandiwch-convenience store"
+        "description": "Sandiwch-convenience store"
+    },
+    {
+        "date": "2026-04-01T10:14:56",
+        "amount": 28.0,
+        "category": "Shopping",
+        "description": "Socks from taobao"
     },
     {
         "date": "2026-04-01T12:07:24",
@@ -122,6 +128,12 @@
         "description": "Hangout with friends"
     },
     {
+        "date": "2026-04-08T14:26:33",
+        "amount": 200,
+        "category": "Shopping",
+        "description": "Sasa at cwb"
+    },
+    {
         "date": "2026-04-09T10:15:24",
         "amount": 6.9,
         "category": "Transport",
@@ -132,6 +144,12 @@
         "amount": 30.0,
         "category": "Meals",
         "description": "Lunch at cha chaan teng"
+    },
+    {
+        "date": "2026-04-09T17:19:48",
+        "amount": 33.0,
+        "category": "Shopping",
+        "description": "Earrings"
     },
     {
         "date": "2026-04-09T20:15:46",
