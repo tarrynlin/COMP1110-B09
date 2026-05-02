@@ -25,10 +25,8 @@ class AlertEngine:
             rule_groups = {}
             for rule in rules:
                 key = (rule.category, rule.period)
-                if key not in rule_groups:
-                    rule_groups[key] = []
-                rule_groups[key].append(rule)
-            
+                rule_groups.setdefault(key, []).append(rule)
+                
             # Process each category-period combination
             for (category, period), group_rules in rule_groups.items():
                 matches = []
@@ -49,53 +47,30 @@ class AlertEngine:
                 for m in matches:
                     total += m.amount
                 
-                 # Sort rules by threshold (ascending) to check warning before critical
-                sorted_rules = sorted(group_rules, key=lambda r: r.threshold)
-                
-                # Track the highest threshold exceeded
+                severity_map = {"Critical": 2, "Warning": 1, "Notice": 0}
                 highest_alert = None
-                highest_usage = 0
+                severity_score = -1
+
                 
-                for rule in sorted_rules:
-                    if rule.threshold > 0:
-                        usage = total / rule.threshold
-                        
-                        # Check if this rule's threshold is exceeded
-                        if usage >= 1.0:
-                            alert_type = rule.alert.value
-                            alert_msg = f"{alert_type}! [{period}] {category.value} spending has reached ${total:.2f}, {(total - rule.threshold):.2f} over limit!"
-                            
-                            
-                            # Track the most severe alert (Critical > Warning)
-                            if highest_alert is None:
-                                highest_alert = (alert_msg, alert_type, usage)
-                            elif alert_type == "Critical" and highest_alert[1] == "Warning":
-                                # Replace warning with critical if critical threshold is higher
-                                if rule.threshold > sorted_rules[0].threshold:
-                                    highest_alert = (alert_msg, alert_type, usage)
-                        elif usage >= 0.95:
-                            alert_msg = f"{rule.alert.value}! [{period}] {category.value} is at {usage*100:.1f}% of your limit! (Only {int((1-usage)*100)}% left)"
-                            alert_type = rule.alert.value
-                            
-                            if highest_alert is None:
-                                highest_alert = (alert_msg, alert_type, usage)
-                            elif alert_type == "Critical" and highest_alert[1] == "Warning":
-                                highest_alert = (alert_msg, alert_type, usage)
-                        elif usage >= 0.85:
-                            alert_msg = f"{rule.alert.value}! [{period}] {category.value} is at {usage*100:.1f}%! of your limit!"
-                            alert_type = rule.alert.value
-                            
-                            if highest_alert is None:
-                                highest_alert = (alert_msg, alert_type, usage)
-                            elif alert_type == "Critical" and highest_alert[1] == "Warning":
-                                highest_alert = (alert_msg, alert_type, usage)
-                        
-                
-                # Add the most severe alert for this category-period combination
-                if highest_alert:
-                    alerts.append(highest_alert[0])
-                
+                for rule in group_rules:
+                    usage = total/rule.threshold
+                    current_score = severity_map.get(rule.alert.value, 0)
+                    msg = None
+
+                    # Check if this rule's threshold is exceeded
+                    if usage >= 1.0:
+                        msg = f"{rule.alert.value}! [{period}] {category.value} spending has reached ${total:.2f}, ${(total - rule.threshold):.2f} over limit!"
+                    elif usage >= 0.85:
+                        msg = f"{rule.alert.value}! [{period}] {category.value} at {usage*100:.1f}% of limit!"
                     
+                    #Replace existing alert if more severe
+                    if msg and current_score > severity_score:
+                            highest_alert = msg
+                            severity_score = current_score
+                if highest_alert: 
+                    alerts.append(highest_alert)
+        
+             
         elif income_value > 0:
             default = {
                 Category.TRANSPORT: (0.15, "Transport"),
@@ -107,8 +82,12 @@ class AlertEngine:
                 Category.UNCATEGORISED: (0.0, "Uncategorised")
             }
             for cat, (percentage, label) in default.items():
-                if percentage > 0 and cat_totals[cat] > (income_value * percentage):
-                    alerts.append(f"Warning: \"{label}\" spending is over {int(percentage*100)}% of your budget")
+                limit = income_value * percentage
+                usage = cat_totals[cat] / limit if limit > 0 else 0
+                if usage >= 1.0:
+                    alerts.append(f"Critical: {cat.value} spending (${cat_totals[cat]:.2f}) is over your budget limit!")
+                elif usage >= 0.90:
+                    alerts.append(f"Warning: {cat.value} spending has reached over {int(usage*100)}% of your budget")
 
         amounts = list(daily_totals.values())
         if len(amounts) >= 2:
