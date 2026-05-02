@@ -1,4 +1,4 @@
-# Simple Budgeting Tool - B09
+# COMP1110 Group B09 - Simple Envelope Budgeting Tool 
 
 ## Description
 This application is a simple budgeting tool that utilises envelope budgeting. By allowing users to allocate their income to specific categories, this tool provides a clear, managable way for users to track their expenses and monitor their financial health through automated summaries and alerts. Moreover, this tool incorporates flexibility in budgeting periods (Daily/Weekly/Monthly) which ensures the tool adapts to individual financial habits.
