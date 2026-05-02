@@ -14,6 +14,7 @@ To run this application, you need Python 3.7+
 
    Alternatively, you can select **Download ZIP** in GitHub or download from moodle.
 3. In your terminal install dependencies
+   
    The application uses customtkinter
    
    ```pip install customtkinter```
@@ -47,8 +48,11 @@ test_data_generator.py: Tool for generating sample data for testing purposes.
 
 ## Troubleshooting
 ModuleNotFoundError: If you see an error regarding customtkinter, ensure you ran ```pip install customtkinter``` in the correct Python environment. 
+
 ModuleNotFoundError: if you see an error regarding tkinter, you may need to reinstall Python from Python.org and ensure "tcl/tk and IDLE" is checked during the custom installation
+
 If using an IDE, ensure you have selected the correct interpreter where you ran your ```pip install``` command
+
 If using a virtual environment, ensure that the environment is active while you install customtkinter
 
 
