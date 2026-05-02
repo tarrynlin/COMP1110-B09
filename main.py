@@ -62,7 +62,7 @@ class main_GUI:
         ##refresh content when the user switches tabs
         current_tab = self.tabview.get()
         if current_tab == "Alerts":
-            self.display_alert()
+            self.display_alerts()
         elif current_tab == "Summary":
             self.display_summaries()
     
