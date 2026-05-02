@@ -48,7 +48,7 @@ Alternatively, you can run it in your IDE
 
 ## Sample Test Cases
 
-```Full_Month_Case_1.json```: The purpose of this test case is to test the summaries and alerts against a full month of transactions and its budget rules. This test case includes 2 malformed budget rules so as to ensure error handling works with this volume of transactions. This test case tests for budget rule alerts, percentage threshold alerts, overspending streak alert and uncategorised transactions alert
+```Full_Month_Case_1.json```: The purpose of this test case is to test the summaries and alerts against a full month of transactions and its budget rules. This test case includes 2 malformed budget rules so as to ensure error handling works with this volume of transactions. This test case tests for budget rule alerts, percentage threshold alerts, overspending streak alert and uncategorised transactions alert.
 
 ```Full_Month_Case_2.json```: The purpose of this test case is to test summaries and alerts against a full month of transactions and its budget rules. This test case does not have any malformed data, so as to simulate a successful program run. 
 
